@@ -23,6 +23,36 @@ news_client = NewsClient(API_KEY, API_SECRET_KEY)
 trade_client = TradingClient(API_KEY, API_SECRET_KEY, paper=PAPER)
 
 
+def _get_latest_quote(tickers: List[str]) -> str:
+    if isinstance(tickers, str):
+        tickers = [tickers]
+    request_params = StockLatestQuoteRequest(symbol_or_symbols=tickers)
+    quote = data_client.get_stock_latest_quote(request_params)
+    if not quote:
+        return (
+            f"Failed to get the latest quote for {tickers}. Reason: {quote['message']}"
+        )
+    return json.dumps(quote, indent=2, default=str)
+
+
+def _get_news(tickers: List[str], period: int = 60) -> str:
+    keys_to_extract = ["source", "headline", "summary", "published_at"]
+    tickers = ",".join(tickers)
+    current_time = datetime.now()
+    start_time = current_time - timedelta(minutes=period)
+    news_request = NewsRequest(
+        symbols=tickers, start=start_time, end=current_time, limit=50
+    )
+    news_response = news_client.get_news(news_request)
+    if not news_response:
+        return f"Failed to get news for {tickers}. Reason: {news_response['message']}"
+    articles = news_response["news"]
+    formatted_response = [
+        {key: dict(article).get(key) for key in keys_to_extract} for article in articles
+    ]
+    return json.dumps(formatted_response, indent=2, default=str)
+
+
 @tool(
     "get_latest_quote",
     return_direct=True,
@@ -37,13 +67,7 @@ def get_latest_quote(tickers: List[str]) -> str:
     Returns:
         str: The latest quote for `ticker`.
     """
-    request_params = StockLatestQuoteRequest(symbol_or_symbols=tickers)
-    quote = data_client.get_stock_latest_quote(request_params)
-    if quote["status"] != 200:
-        return (
-            f"Failed to get the latest quote for {tickers}. Reason: {quote['message']}"
-        )
-    return json.dumps(quote["quotes"], indent=2, default=str)
+    return _get_latest_quote(tickers)
 
 
 @tool(
@@ -61,18 +85,7 @@ def get_news(tickers: List[str], period: 60) -> str:
     Returns:
         str: The latest news for `ticker`.
     """
-    if isinstance(tickers, str):
-        tickers = [tickers]
-
-    current_time = datetime.datetime.now()
-    start_time = current_time - timedelta(minutes=period)
-    news_request = NewsRequest(
-        symbols=tickers, start=start_time, end=current_time, limit=50
-    )
-    news_response = news_client.get_news(news_request)
-    if news_response["status"] != 200:
-        return f"Failed to get news for {tickers}. Reason: {news_response['message']}"
-    return json.dumps(news_response["news"], indent=2, default=str)
+    return _get_news(tickers, period)
 
 
 def _trade(ticker: str, quantity: str, limit_price: float, side: OrderSide) -> None:
