@@ -10,13 +10,18 @@ requires-python = ">=3.13"
 dependencies = [
     "alpaca-py>=0.43.2",
     "langchain>=1.2.10",
+    "langchain-community>=0.4.1",
+    "langchain-core>=1.2.13",
     "langgraph>=1.0.8",
     "pydantic>=2.12.5",
+    "pytz>=2025.2",
+    "torch>=2.10.0",
     "transformers>=5.1.0",
+    "typer>=0.23.1",
 ]
 
 [project.scripts]
-syndicate = "syndicate:main"
+syndicate = "syndicate.cli:app"
 
 [build-system]
 requires = ["hatchling"]

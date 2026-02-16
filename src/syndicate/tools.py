@@ -53,6 +53,58 @@ def _get_news(tickers: List[str], period: int = 60) -> str:
     return json.dumps(formatted_response, indent=2, default=str)
 
 
+def _get_account_summary() -> str:
+    """Gets the account summary for the current account.
+
+    Returns:
+        str: The account summary for the current account.
+    """
+    keys_to_extract = [
+        "buying_power",
+        "cash",
+        "equity",
+        "last_equity",
+        "portfolio_value",
+        "long_market_value",
+        "short_market_value",
+        "initial_margin",
+        "maintenance_margin",
+        "multiplier",
+    ]
+    account_summary = trade_client.get_account()
+    if not account_summary:
+        return f"Failed to get account summary. Reason: {account_summary['message']}"
+    status = {k: v for k, v in dict(account_summary).items() if k in keys_to_extract}
+    return json.dumps(status, indent=2, default=str)
+
+
+def _trade(ticker: str, quantity: str, limit_price: float, side: OrderSide) -> None:
+    """Trades stocker for `ticker` and `quantity`.
+
+    Args:
+        ticker (str): The ticker to trade.
+        quantity (str): The quantity to trade.
+        limit_price (float): The limit price for the order. If not provided, a market order will be placed.
+        side (OrderSide): The side of the order (BUY or SELL).
+
+    Returns:
+        str: A message indicating the result of the trade operation.
+    """
+    if limit_price:
+        order = LimitOrderRequest(
+            symbol=ticker,
+            qty=quantity,
+            limit_price=limit_price,
+            side=side,
+            time_in_force=TimeInForce.DAY,
+        )
+    else:
+        order = MarketOrderRequest(
+            symbol=ticker, qty=quantity, side=side, time_in_force=TimeInForce.DAY
+        )
+    trade_client.submit_order(order)
+
+
 @tool(
     "get_latest_quote",
     return_direct=True,
@@ -88,31 +140,18 @@ def get_news(tickers: List[str], period: 60) -> str:
     return _get_news(tickers, period)
 
 
-def _trade(ticker: str, quantity: str, limit_price: float, side: OrderSide) -> None:
-    """Trades stocker for `ticker` and `quantity`.
-
-    Args:
-        ticker (str): The ticker to trade.
-        quantity (str): The quantity to trade.
-        limit_price (float): The limit price for the order. If not provided, a market order will be placed.
-        side (OrderSide): The side of the order (BUY or SELL).
+@tool(
+    "get_account_summary",
+    return_direct=True,
+    description="Get the account summary for the current account.",
+)
+def get_account_summary() -> str:
+    """Gets the account summary for the current account.
 
     Returns:
-        str: A message indicating the result of the trade operation.
+        str: The account summary for the current account.
     """
-    if limit_price:
-        order = LimitOrderRequest(
-            symbol=ticker,
-            qty=quantity,
-            limit_price=limit_price,
-            side=side,
-            time_in_force=TimeInForce.DAY,
-        )
-    else:
-        order = MarketOrderRequest(
-            symbol=ticker, qty=quantity, side=side, time_in_force=TimeInForce.DAY
-        )
-    trade_client.submit_order(order)
+    return _get_account_summary()
 
 
 @tool(

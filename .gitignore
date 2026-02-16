@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# User specific files
+agent.json
+portfolio.json
