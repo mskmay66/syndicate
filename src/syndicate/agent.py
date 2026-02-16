@@ -1,8 +1,10 @@
 import json
+import re
+import time
 import logging
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain.agents import create_agent
 
 from .tools import (
     get_account_summary,
@@ -19,57 +21,128 @@ logging.basicConfig(level=logging.INFO)
 
 
 class SyndicateAgent:
-    def __init__(self, portfolio: PortfolioModel, agent_model: AgentModel):
+    def __init__(
+        self, portfolio: PortfolioModel, agent_model: AgentModel, sleep_time: int = 60
+    ):
         self.portfolio = portfolio
         self.agent_model = agent_model
-        self.model = self.load_model(agent_model)
-        self.agent = self.build_agent(self.model)
+        self.sleep_time = sleep_time
+        self.model, self.tokenizer = self.load_model_and_tokenizer(agent_model)
 
-    def load_model(self, agent_model: AgentModel) -> HuggingFacePipeline:
+    @staticmethod
+    def extract_json(s: str) -> dict:
+        """Extracts a JSON object from a string.
+
+        Args:
+            s (str): The string to extract the JSON object from.
+
+        Returns:
+            dict: The extracted JSON object.
+        """
+        match = re.findall(r"\{.+[:,].+\}|\[.+[:,].+\]", s)
+        if match:
+            try:
+                return json.loads(match[0])
+            except json.JSONDecodeError:
+                logging.error("Failed to decode JSON from string: %s", s)
+                return {}
+        else:
+            logging.warning("No JSON object found in string: %s", s)
+            return {}
+
+    def load_model_and_tokenizer(self, agent_model: AgentModel) -> HuggingFacePipeline:
         logging.info(
             f"Loading agent {agent_model.name} with temperature {agent_model.temperature}"
         )
-        tokenizer = AutoTokenizer.from_pretrained(agent_model.name)
-        model = AutoModelForCausalLM.from_pretrained(agent_model.name)
-        agent_pipe = pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=tokenizer,
-            max_new_tokens=512,
-            temperature=agent_model.temperature,
-            device_map="auto",
-        )
-        llm = HuggingFacePipeline(pipeline=agent_pipe).with_structured_output(
-            DecisionModel
-        )
-        logging.info(f"Agent {agent_model.name} loaded successfully")
-        return llm
+        if agent_model.local_path:
+            logging.info(f"Loading model from local path {agent_model.local_path}")
+            tokenizer = AutoTokenizer.from_pretrained(agent_model.local_path)
+            llm = AutoModelForCausalLM.from_pretrained(agent_model.local_path)
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(agent_model.name)
+            llm = AutoModelForCausalLM.from_pretrained(agent_model.name)
 
-    def build_agent(self, llm: HuggingFacePipeline):
-        sys_prompt = """
-        You are a stock trading assistant. You have access to the following tools:  
-        1. buy_stock: Buys a given quantity of a stock.
-        2. sell_stock: Sells a given quantity of a stock.
-        3. get_account_summary: Gets the account summary for the current account.
-        4. get_latest_quote: Gets the latest stock quote for a given ticker symbol.
-        5. get_news: Gets the latest news for a given ticker symbol.
-        When given a prompt, you should first analyze the account summary, quotes, and news to make an informed decision about whether to buy or sell any stocks in the portfolio. If you decide to buy or sell, you should use the buy_stock or sell_stock tool to execute the trade.
-        Use get_account_summary to get the account summary, get_latest_quote to get the latest stock quote for a given ticker symbol, and get_news to get the latest news for a given ticker symbol. Use buy_stock to buy a given quantity of a stock and sell_stock to sell a given quantity of a stock.
-        """
-        tools = [buy_stock, sell_stock, get_account_summary, get_latest_quote, get_news]
-        agent = create_agent(llm, tools, sys_prompt)
-        return agent
+        logging.info(f"Agent {agent_model.name} loaded successfully")
+        return llm, tokenizer
 
     def run(self):
         while True:
-            result = self.agent.invoke(
+            # 1. Get current state of the portfolio and account summary
+            account_summary = get_account_summary()
+
+            # 2. Get the latest news and stock quotes for the tickers in the portfolio
+            news = get_news(self.portfolio.tickers)
+
+            # 3. Get the current quotes for the tickers in the portfolio
+            quotes = get_latest_quote(self.portfolio.tickers)
+
+            # 4. Build the messages to send to the language model, including the account summary, news, and stock quotes, and ask the model to decide on a trade action to take (buy/sell/hold)
+            messages = [
                 {
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": "What should I do with my portfolio?",
-                        }
-                    ]
-                }
+                    "role": "system",
+                    "content": """You are a financial expert and prolific trader that helps users manage their stock portfolios. You have access to the following tools: buy_stock and sell_stock.
+                         - buy_stock(ticker: str, quantity: int, limit_price: float = None) -> str: Buys a stock for a given ticker symbol and quantity. If limit_price is not provided, a market order will be placed.
+                         - sell_stock(ticker: str, quantity: int, limit_price: float = None) -> str: Sells a stock for a given ticker symbol and quantity. If limit_price is not provided, a market order will be placed.
+                         
+                         To use these tools return a list of actions in the following format:
+                        [
+                         {
+                            "direction": "buy" or "sell",
+                            "ticker": "the ticker symbol of the stock to trade",
+                            "quantity": "the quantity of shares to trade"
+                         }
+                        ]
+                         
+                        If you want to hold and not make any trades, return an empty list. Always return a list of actions, even if it's empty. Do not include any explanations or reasoning in your response, only return the list of actions in the specified format.
+                        """,
+                },
+                {
+                    "role": "user",
+                    "content": """Review the following account summary, news, and stock quotes, and decide on a trade action to take. Only return a list of actions in the specified format. Do not include any explanations or reasoning in your response.\n\n
+                            Account Summary:\n{account_summary}\n\n
+                            Latest News:\n{news}\n\n
+                            Latest Stock Quotes:\n{quotes}
+                            """.format(
+                        account_summary=account_summary,
+                        news=news,
+                        quotes=quotes,
+                    ),
+                },
+            ]
+
+            # 5. Apply the tokenizer and model to the messages to get the agent's response
+            input_ids = self.tokenizer.apply_chat_template(
+                messages, add_generation_prompt=True, return_tensors="pt"
+            ).to(self.model.device)
+            input_len = input_ids["input_ids"].shape[-1]
+            with torch.no_grad():
+                result = self.model.generate(
+                    **input_ids,
+                    max_length=2048,
+                    temperature=self.agent_model.temperature,
+                )
+            result_text = self.tokenizer.batch_decode(
+                result[0][input_len:], skip_special_tokens=True
+            )[0]
+            logging.info(f"Agent response: {result_text}")
+
+            # 5. Parse the agent's response to extract the trade action, and execute the trade using the appropriate tool function
+            model_decision = self.extract_json(result_text)
+            for action in model_decision:
+                decision = DecisionModel(**action)
+                if decision.direction == "buy":
+                    buy_result = buy_stock(decision.ticker, decision.quantity)
+                    logging.info(f"Buying stock: {buy_result}")
+                elif decision.direction == "sell":
+                    sell_result = sell_stock(decision.ticker, decision.quantity)
+                    logging.info(f"Selling stock: {sell_result}")
+                else:
+                    logging.warning(
+                        f"Invalid trade direction: {decision.direction}. Skipping action."
+                    )
+
+            # 6. Sleep for a certain period of time before repeating the process
+            logging.info(
+                f"Sleeping for {self.sleep_time} seconds before next iteration..."
             )
-            logging.info(f"Agent decision: {json.dumps(result, indent=2)}")
+            time.sleep(self.sleep_time)

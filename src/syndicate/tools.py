@@ -2,7 +2,6 @@ import os
 from datetime import datetime, timedelta
 from typing import List
 import json
-from langchain.tools import tool
 
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
@@ -23,7 +22,7 @@ news_client = NewsClient(API_KEY, API_SECRET_KEY)
 trade_client = TradingClient(API_KEY, API_SECRET_KEY, paper=PAPER)
 
 
-def _get_latest_quote(tickers: List[str]) -> str:
+def get_latest_quote(tickers: List[str]) -> str:
     if isinstance(tickers, str):
         tickers = [tickers]
     request_params = StockLatestQuoteRequest(symbol_or_symbols=tickers)
@@ -35,7 +34,7 @@ def _get_latest_quote(tickers: List[str]) -> str:
     return json.dumps(quote, indent=2, default=str)
 
 
-def _get_news(tickers: List[str], period: int = 60) -> str:
+def get_news(tickers: List[str], period: int = 60) -> str:
     keys_to_extract = ["source", "headline", "summary", "published_at"]
     tickers = ",".join(tickers)
     current_time = datetime.now()
@@ -53,7 +52,7 @@ def _get_news(tickers: List[str], period: int = 60) -> str:
     return json.dumps(formatted_response, indent=2, default=str)
 
 
-def _get_account_summary() -> str:
+def get_account_summary() -> str:
     """Gets the account summary for the current account.
 
     Returns:
@@ -105,60 +104,6 @@ def _trade(ticker: str, quantity: str, limit_price: float, side: OrderSide) -> N
     trade_client.submit_order(order)
 
 
-@tool(
-    "get_latest_quote",
-    return_direct=True,
-    description="Get the latest stock quote for a given ticker symbol.",
-)
-def get_latest_quote(tickers: List[str]) -> str:
-    """Gets the latest quote for `ticker`.
-
-    Args:
-        ticker (str): The ticker to get a quote for.
-
-    Returns:
-        str: The latest quote for `ticker`.
-    """
-    return _get_latest_quote(tickers)
-
-
-@tool(
-    "get_news",
-    return_direct=True,
-    description="Get the latest news for a given ticker symbol.",
-)
-def get_news(tickers: List[str], period: 60) -> str:
-    """Gets the latest news for `ticker`.
-
-    Args:
-        ticker (str): The ticker to get news for.
-        period (int): The number of minutes to look back for news.
-
-    Returns:
-        str: The latest news for `ticker`.
-    """
-    return _get_news(tickers, period)
-
-
-@tool(
-    "get_account_summary",
-    return_direct=True,
-    description="Get the account summary for the current account.",
-)
-def get_account_summary() -> str:
-    """Gets the account summary for the current account.
-
-    Returns:
-        str: The account summary for the current account.
-    """
-    return _get_account_summary()
-
-
-@tool(
-    "buy_stock",
-    return_direct=True,
-    description="Buy a stock for a given ticker symbol and quantity.",
-)
 def buy_stock(ticker: str, quantity: int, limit_price: float = None) -> str:
     """Buys a stock for `ticker` and `quantity`.
 
@@ -177,11 +122,6 @@ def buy_stock(ticker: str, quantity: int, limit_price: float = None) -> str:
         return f"Failed to place a buy order for {ticker}. Reason: {str(e)}"
 
 
-@tool(
-    "sell_stock",
-    return_direct=True,
-    description="Sell a stock for a given ticker symbol and quantity.",
-)
 def sell_stock(ticker: str, quantity: int, limit_price: float = None) -> str:
     """Sells a stock for `ticker` and `quantity`.
 

@@ -7,7 +7,6 @@ from .agent import SyndicateAgent
 app = typer.Typer()
 logging.basicConfig(level=logging.INFO)
 
-# keep track of user's portfolio in file portfolio.json
 logging.info("Loading portfolio data from portfolio.json")
 with open("portfolio.json", "r") as f:
     portfolio_data = PortfolioModel.model_validate_json(f.read())
@@ -16,6 +15,9 @@ with open("portfolio.json", "r") as f:
 logging.info("Loading agent choice from agent.json")
 with open("agent.json", "r") as f:
     agent_choice = AgentModel.model_validate_json(f.read())
+logging.info(
+    "Syndicate agent installed successfully. You can now run 'syndicate start' to start the agent."
+)
 
 
 @app.command()
