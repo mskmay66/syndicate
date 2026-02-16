@@ -1,0 +1,29 @@
+[project]
+name = "syndicate"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Michael May", email = "mskmay66@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "alpaca-py>=0.43.2",
+    "langchain>=1.2.10",
+    "langgraph>=1.0.8",
+    "pydantic>=2.12.5",
+    "transformers>=5.1.0",
+]
+
+[project.scripts]
+syndicate = "syndicate:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.15.1",
+]
