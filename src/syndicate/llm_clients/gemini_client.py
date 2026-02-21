@@ -31,7 +31,7 @@ class NormalizedChatGoogleGenerativeAI(ChatGoogleGenerativeAI):
         return self._normalize_content(super().invoke(input, config, **kwargs))
 
 
-class GoogleClient(BaseLLMClient):
+class GeminiClient(BaseLLMClient):
     """Client for Google Gemini models."""
 
     def __init__(self, model: str, base_url: Optional[str] = None, **kwargs):
