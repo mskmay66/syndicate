@@ -1,5 +1,6 @@
 import os
 import httpx
+from langchain_core.tools import tool
 
 
 class AlphaVantageInterface:
@@ -41,6 +42,15 @@ class AlphaVantageInterface:
 interface = AlphaVantageInterface()
 
 
+@tool(
+    "get_indicator",
+    return_direct=True,
+    description=(
+        "Gets technical indicator data for a given stock symbol. "
+        "Supported indicators include: close_50_sma, close_200_sma, close_10_ema, macd, macds, macdh, rsi, boll, boll_ub, boll_lb, atr, vwma. "
+        "Example usage: get_indicator('AAPL', 'close_50_sma')"
+    ),
+)
 def get_indicator(symbol: str, indicator: str, interval: str = "daily") -> str:
     """Tool to get technical indicator data for a stock symbol."""
     supported_indicators = {
