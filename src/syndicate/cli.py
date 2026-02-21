@@ -1,30 +1,47 @@
 import typer
 import logging
-from .models.portfolio_model import PortfolioModel
-from .models.agent_model import AgentModel
-from .agent import SyndicateAgent
+from rich import print
+
+from .models.llm import LLMConfig
+from .model.trade_state import TradeState
+from .models.watchlist import Watchlist
+from .trading_graph import TradingGraph
+
 
 app = typer.Typer()
 logging.basicConfig(level=logging.INFO)
 
-logging.info("Loading portfolio data from portfolio.json")
-with open("portfolio.json", "r") as f:
-    portfolio_data = PortfolioModel.model_validate_json(f.read())
-
 # keep track of a user's agent choice in file agent.json
 logging.info("Loading agent choice from agent.json")
 with open("agent.json", "r") as f:
-    agent_choice = AgentModel.model_validate_json(f.read())
+    agent_choice = LLMConfig.model_validate_json(f.read())
 logging.info(
     "Syndicate agent installed successfully. You can now run 'syndicate start' to start the agent."
 )
 
+logging.info("Loading watchlist from watchlist.json")
+with open("watchlist.json", "r") as f:
+    watchlist = Watchlist.model_validate_json(f.read())
+
 
 @app.command()
-def start():
+def run():
     """Starts the Syndicate agent."""
-    agent = SyndicateAgent(portfolio_data, agent_choice)
-    agent.run()
+    inital_state = TradeState.model_validate(
+        {
+            "current_date": "2024-06-01",
+            "tickers": watchlist.tickers,
+            "fundementals_report": "",
+            "news_report": "",
+            "messages": [],
+        }
+    )
+
+    graph = TradingGraph(agent_choice)
+    trading_graph = graph.build_graph()
+
+    result = trading_graph.invoke(inital_state)
+    print(f"Trading decision: {result.trading_decision}")
 
 
 if __name__ == "__main__":

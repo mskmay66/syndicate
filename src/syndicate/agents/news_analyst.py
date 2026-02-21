@@ -38,6 +38,8 @@ def build_news_analyst(llm):
             report = result.content
 
         return {
+            "current_date": current_date,
+            "tickers": tickers,
             "messages": [result],
             "news_report": report,
         }
