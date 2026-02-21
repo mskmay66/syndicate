@@ -1,6 +1,7 @@
 import typer
 import logging
 from rich import print
+from datetime import datetime
 
 from .models.llm import LLMConfig
 from .model.trade_state import TradeState
@@ -29,7 +30,7 @@ def run():
     """Starts the Syndicate agent."""
     inital_state = TradeState.model_validate(
         {
-            "current_date": "2024-06-01",
+            "current_date": datetime.now().strftime("%Y-%m-%d"),
             "tickers": watchlist.tickers,
             "fundementals_report": "",
             "news_report": "",
