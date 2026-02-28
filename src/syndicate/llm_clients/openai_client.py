@@ -35,6 +35,8 @@ class OpenAIClient(BaseLLMClient):
     ):
         super().__init__(model, base_url, **kwargs)
         self.provider = provider.lower()
+        self.model = model
+        self.base_url = base_url
 
     def get_llm(self) -> UnifiedChatOpenAI:
         """Get the OpenAI LLM client instance."""
@@ -53,6 +55,11 @@ class OpenAIClient(BaseLLMClient):
         elif self.provider == "ollama":
             llm_kwargs["base_url"] = "http://localhost:11434/v1"
             llm_kwargs["api_key"] = "ollama"  # Ollama doesn't require auth
+        elif self.provider == "kimi":
+            llm_kwargs["base_url"] = "https://api.moonshot.ai/v1"
+            api_key = os.environ.get("KIMI_API_KEY")
+            if api_key:
+                llm_kwargs["api_key"] = api_key
         elif self.base_url:
             llm_kwargs["base_url"] = self.base_url
 

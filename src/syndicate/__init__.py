@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from syndicate!")
+from .llm_clients import create_llm_client
+
+__all__ = ["create_llm_client"]
