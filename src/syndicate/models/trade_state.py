@@ -9,6 +9,8 @@ class TradeState(BaseModel):
     current_date: str
     fundementals_report: Optional[str] = None
     news_report: Optional[str] = None
+    trade_report: Optional[str] = None
+    used_tools: bool = False
     messages: Annotated[
         list[BaseMessage],
         "List of messages exchanged in the trading process",

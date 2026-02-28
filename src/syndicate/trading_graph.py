@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List, Callable
 
 from langgraph.graph import END, StateGraph, START
 from langgraph.prebuilt import ToolNode
@@ -25,7 +25,33 @@ class TradingGraph:
     def __init__(self, llm_config: LLMConfig, selected_agents=["news", "fundementals"]):
         self.llm_config = llm_config
         self.selected_agents = selected_agents
-        self.llm = create_llm_client(**self.llm_config)
+        self.llm = create_llm_client(**self.llm_config.model_dump()).get_llm()
+
+    @property
+    def tool_map(self) -> Dict[str, List[Callable]]:
+        """Map agent names to their corresponding tools.
+
+        Returns:
+            Dict[str, List[Callable]]: A dictionary mapping agent names to their corresponding tools.
+        """
+        return {
+            "fundementals_tools": [
+                get_fundementals,
+                get_balance_sheet,
+                get_income_statement,
+                get_cashflow,
+            ],
+            "news_tools": [
+                get_news,
+                get_global_news,
+            ],
+            "trader_tools": [
+                get_latest_quote,
+                buy_stock,
+                sell_stock,
+                get_account_summary,
+            ],
+        }
 
     def _create_tool_nodes(self) -> Dict[str, ToolNode]:
         """Create tool nodes for the trading graph based on the selected agents.
@@ -33,29 +59,11 @@ class TradingGraph:
         Returns:
             Dict[str, ToolNode]: A dictionary mapping agent names to their corresponding ToolNode instances.
         """
+        tools = self.tool_map
         return {
-            "fundementals": ToolNode(
-                [
-                    get_fundementals,
-                    get_balance_sheet,
-                    get_income_statement,
-                    get_cashflow,
-                ]
-            ),
-            "news": ToolNode(
-                [
-                    get_news,
-                    get_global_news,
-                ]
-            ),
-            "trader": ToolNode(
-                [
-                    get_latest_quote,
-                    buy_stock,
-                    sell_stock,
-                    get_account_summary,
-                ]
-            ),
+            "fundementals": ToolNode(tools=tools.get("fundementals_tools", [])),
+            "news": ToolNode(tools=tools.get("news_tools", [])),
+            "trader": ToolNode(tools=tools.get("trader_tools", [])),
         }
 
     def _create_agent_nodes(self) -> Dict[str, ToolNode]:
@@ -80,23 +88,42 @@ class TradingGraph:
         Returns:
             Dict[str, ToolNode]: A dictionary mapping agent names to their corresponding nodes in the trading graph.
         """
+
+        def should_use_tools(state):
+            last = state.messages[-1]
+            if getattr(last, "tool_calls", None) and not state.used_tools:
+                return "tools"
+            return "continue"
+
         tool_nodes = self._create_tool_nodes()
         agent_nodes = self._create_agent_nodes()
 
         workflow = StateGraph(TradeState)
-        for agent in self.selected_agents + ["trader"]:
+        for i, agent in enumerate(self.selected_agents + ["trader"]):
             workflow.add_node(agent, agent_nodes[agent])
 
             # add tools
-            for tool in tool_nodes[agent]:
-                workflow.add_node(tool.name, tool)
-                workflow.add_edge(agent, tool.name)
+            tool_node = tool_nodes.get(agent)
+            if tool_node:
+                tool_node_name = f"{agent}_tools"
+                workflow.add_node(tool_node_name, tool_node)
+
+                next_node = (
+                    self.selected_agents[i + 1]
+                    if i + 1 < len(self.selected_agents)
+                    else "trader"
+                )
+                workflow.add_conditional_edges(
+                    agent,
+                    should_use_tools,
+                    {
+                        "tools": tool_node_name,
+                        "continue": next_node,
+                    },
+                )
+                workflow.add_edge(tool_node_name, agent)
 
         workflow.add_edge(START, self.selected_agents[0])
-        for i in range(len(self.selected_agents) - 1):
-            workflow.add_edge(self.selected_agents[i], self.selected_agents[i + 1])
-
-        workflow.add_edge(self.selected_agents[-1], "trader")
         workflow.add_edge("trader", END)
         return workflow.compile()
 
@@ -110,4 +137,4 @@ class TradingGraph:
             TradeState: The final state after running the trading graph.
         """
         graph = self.build_graph()
-        return graph.invoke(initial_state)
+        return graph.invoke(initial_state, config={"recursion_limit": 50})

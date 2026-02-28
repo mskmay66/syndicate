@@ -1,11 +1,15 @@
+from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from .tools import get_news, get_global_news
+from ..tools import get_news, get_global_news
+
+
+logger = setup_logging(__name__, ".logs/news_analyst.log")
 
 
 def build_news_analyst(llm):
     def news_analyst_node(state):
-        current_date = state.get("current_date")
-        tickers = state.get("tickers", [])
+        current_date = state.current_date
+        tickers = state.tickers
 
         tools = [get_news, get_global_news]
 
@@ -32,15 +36,28 @@ def build_news_analyst(llm):
         prompt = prompt.partial(tool_names=", ".join([tool.name for tool in tools]))
 
         chain = prompt | llm.bind_tools(tools)
-        result = chain.invoke(state["messages"])
+        logger.info("Invoking news analyst")
+        result = chain.invoke(state.messages)
+        logger.info(f"News analyst result: {result}")
 
+        report = ""
+        used_all_tools = False
+        tools_used = set()
         if len(result.tool_calls) == 0:
             report = result.content
+            logger.info(f"News analyst did not use any tools. Report: {report}")
+        else:
+            logger.info(f"News analyst used tools. Tool calls: {result.tool_calls}")
+            for tool_call in result.tool_calls:
+                tools_used.add(tool_call["name"])
+            if len(tools_used) == len(tools):
+                used_all_tools = True
 
         return {
             "current_date": current_date,
             "tickers": tickers,
             "messages": [result],
+            "tools_used": used_all_tools,
             "news_report": report,
         }
 

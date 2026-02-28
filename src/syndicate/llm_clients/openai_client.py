@@ -67,7 +67,6 @@ class OpenAIClient(BaseLLMClient):
             "timeout",
             "max_retries",
             "reasoning_effort",
-            "api_key",
             "callbacks",
         ):
             if key in self.kwargs:

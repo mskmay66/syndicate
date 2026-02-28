@@ -4,7 +4,7 @@ from rich import print
 from datetime import datetime
 
 from .models.llm import LLMConfig
-from .model.trade_state import TradeState
+from .models.trade_state import TradeState
 from .models.watchlist import Watchlist
 from .trading_graph import TradingGraph
 
@@ -41,7 +41,7 @@ def run():
     graph = TradingGraph(agent_choice)
     trading_graph = graph.build_graph()
 
-    result = trading_graph.invoke(inital_state)
+    result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
     print(f"Trading decision: {result.trading_decision}")
 
 

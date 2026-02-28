@@ -1,16 +1,20 @@
+from ..log_config import setup_logging
+
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from .tools import (
+from ..tools import (
     get_fundementals,
     get_balance_sheet,
     get_income_statement,
     get_cashflow,
 )
 
+logger = setup_logging(__name__, ".logs/fundementals_analyst.log")
+
 
 def build_fundementals_analyst(llm):
     def fundementals_analyst_node(state):
-        current_date = state.get("current_date")
-        tickers = state.get("tickers", [])
+        current_date = state.current_date
+        tickers = state.tickers
 
         tools = [
             get_fundementals,
@@ -45,17 +49,28 @@ def build_fundementals_analyst(llm):
 
         chain = prompt | llm.bind_tools(tools)
 
-        result = chain.invoke(state["messages"])
+        logger.info("Invoking fundementals analyst")
+        result = chain.invoke(state.messages)
+        logger.info(f"Fundementals analyst result: {result}")
 
         report = ""
-
+        tools_used = set()
+        used_all_tools = False
         if len(result.tool_calls) == 0:
             report = result.content
+            logger.info(f"Fundemental analyst report: {report}")
+        else:
+            logger.info(f"Tools used by fundementals analyst: {result.tool_calls}")
+            for tool_call in result.tool_calls:
+                tools_used.add(tool_call["name"])
+            if len(tools_used) == len(tools):
+                used_all_tools = True
 
         return {
             "current_date": current_date,
             "tickers": tickers,
             "messages": [result],
+            "tools_used": used_all_tools,
             "fundamentals_report": report,
         }
 
