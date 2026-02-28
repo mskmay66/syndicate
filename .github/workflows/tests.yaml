@@ -1,0 +1,49 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      # Use an existing action to set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13' # Specify your required Python version
+
+    - name: Install uv and dependencies
+      # Use the setup-uv action to install uv and cache it
+      uses: astral-sh/setup-uv@v1
+      with:
+        uv-version: 0.1.x # Use the latest version or pin to a specific one
+        # Optional: cache the uv package cache
+        cache-key-prefix: "v1-uv-cache"
+
+    - name: Create a virtual environment and sync dependencies
+      run: |
+        uv venv --python 3.11 .venv
+        source .venv/bin/activate
+        # Use uv sync to install dependencies from pyproject.toml
+        uv sync
+        # Or install specific requirements files
+        # uv pip install -r requirements.txt
+
+    - name: Install test dependencies (e.g., pytest, ruff)
+      run: |
+        source .venv/bin/activate
+        # Use uv add (or uv pip install) to add development/test tools
+        uv add pytest pytest-cov ruff
+
+    - name: Run tests with pytest
+      run: |
+        source .venv/bin/activate
+        # Run your tests using the installed tools
+        uv run pytest --cov=your_package tests/ --junitxml=test-results.xml

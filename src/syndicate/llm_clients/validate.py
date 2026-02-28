@@ -78,7 +78,7 @@ def validate_model(provider: str, model: str) -> bool:
     if provider_lower in ("ollama", "openrouter"):
         return True
 
-    if provider_lower not in VALID_MODELS:
-        return True
-
-    return model in VALID_MODELS[provider_lower]
+    valid_models = VALID_MODELS.get(provider_lower, [])
+    if model not in valid_models:
+        raise ValueError(f"Unsupported model '{model}' for provider '{provider}'.")
+    return True

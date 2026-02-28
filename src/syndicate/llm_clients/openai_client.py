@@ -37,6 +37,7 @@ class OpenAIClient(BaseLLMClient):
         self.provider = provider.lower()
         self.model = model
         self.base_url = base_url
+        self.validate_model()
 
     def get_llm(self) -> UnifiedChatOpenAI:
         """Get the OpenAI LLM client instance."""
@@ -67,10 +68,12 @@ class OpenAIClient(BaseLLMClient):
             "timeout",
             "max_retries",
             "reasoning_effort",
+            "api_key",
             "callbacks",
         ):
             if key in self.kwargs:
-                llm_kwargs[key] = self.kwargs[key]
+                if key not in llm_kwargs:
+                    llm_kwargs[key] = self.kwargs[key]
 
         return UnifiedChatOpenAI(**llm_kwargs)
 

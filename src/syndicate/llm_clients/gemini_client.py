@@ -38,6 +38,7 @@ class GeminiClient(BaseLLMClient):
         super().__init__(model, base_url, **kwargs)
         self.model = model
         self.base_url = base_url
+        self.validate_model()
 
     def get_llm(self) -> Any:
         """Return configured ChatGoogleGenerativeAI instance."""

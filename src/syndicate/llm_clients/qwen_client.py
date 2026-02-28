@@ -17,6 +17,9 @@ class QwenClient(BaseLLMClient):
 
     def __init__(self, model: str, base_url: Optional[str] = None, **kwargs):
         super().__init__(model, base_url, **kwargs)
+        self.model = model
+        self.base_url = base_url
+        self.validate_model()
 
     def get_llm(self) -> ChatQwen:
         """Get the Qwen LLM client instance."""

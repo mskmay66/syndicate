@@ -43,16 +43,11 @@ def _trade(
     trade_client.submit_order(order)
 
 
-@tool(
-    "get_account_summary",
-    return_direct=True,
-    description="Gets the account summary for the current account. Example usage: get_account_summary()",
-)
-def get_account_summary() -> str:
+def _get_account_summary() -> str:
     """Gets the account summary for the current account.
 
     Returns:
-        str: The account summary for the current account.
+        dict: The account summary for the current account.
     """
     keys_to_extract = [
         "buying_power",
@@ -71,6 +66,20 @@ def get_account_summary() -> str:
         return f"Failed to get account summary. Reason: {account_summary['message']}"
     status = {k: v for k, v in dict(account_summary).items() if k in keys_to_extract}
     return json.dumps(status, indent=2, default=str)
+
+
+@tool(
+    "get_account_summary",
+    return_direct=True,
+    description="Gets the account summary for the current account. Example usage: get_account_summary()",
+)
+def get_account_summary() -> str:
+    """Gets the account summary for the current account.
+
+    Returns:
+        str: The account summary for the current account.
+    """
+    return _get_account_summary()
 
 
 @tool(
