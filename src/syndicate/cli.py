@@ -1,6 +1,5 @@
 import typer
 import logging
-from rich import print
 from datetime import datetime
 
 from .models.llm import LLMConfig
@@ -42,7 +41,7 @@ def run():
     trading_graph = graph.build_graph()
 
     result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
-    print(f"Trading decision: {result.trading_decision}")
+    logging.info(f"Final result: {result}")
 
 
 if __name__ == "__main__":

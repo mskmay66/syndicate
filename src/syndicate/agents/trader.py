@@ -49,24 +49,19 @@ def build_trader(llm):
         logger.info(f"Trader result: {result}")
 
         report = ""
-        used_all_tools = False
-        tools_used = set()
+        tools_used = False
         if len(result.tool_calls) == 0:
             report = result.content
             logger.info(f"Trader did not use any tools. Report: {report}")
         else:
             logger.info(f"Trader used tools. Tool calls: {result.tool_calls}")
-            for tool_call in result.tool_calls:
-                tools_used.add(tool_call["name"])
-            if len(tools_used) == len(tools):
-                used_all_tools = True
 
         return {
             "current_date": current_date,
             "tickers": tickers,
             "messages": [result],
             "trade_report": report,
-            "tools_used": used_all_tools,
+            "tools_used": tools_used,
         }
 
     return trader_node
