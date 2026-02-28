@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Optional
 from langchain_core.tools import tool
 
 from alpaca.trading.client import TradingClient
@@ -13,7 +14,9 @@ PAPER = os.getenv("ALPACA_PAPER", "true").lower() == "true"
 trade_client = TradingClient(API_KEY, API_SECRET_KEY, paper=PAPER)
 
 
-def _trade(ticker: str, quantity: str, limit_price: float, side: OrderSide) -> None:
+def _trade(
+    ticker: str, quantity: int, limit_price: Optional[float], side: OrderSide
+) -> None:
     """Trades stocker for `ticker` and `quantity`.
 
     Args:
@@ -75,7 +78,7 @@ def get_account_summary() -> str:
     return_direct=True,
     description="Buys a stock for a given ticker symbol and quantity. If limit_price is not provided, a market order will be placed. Example usage: buy_stock('AAPL', 10) or buy_stock('AAPL', 10, limit_price=150.00)",
 )
-def buy_stock(ticker: str, quantity: int, limit_price: float = None) -> str:
+def buy_stock(ticker: str, quantity: int, limit_price: Optional[float] = None) -> str:
     """Buys a stock for `ticker` and `quantity`.
 
     Args:
@@ -98,7 +101,7 @@ def buy_stock(ticker: str, quantity: int, limit_price: float = None) -> str:
     return_direct=True,
     description="Sells a stock for a given ticker symbol and quantity. If limit_price is not provided, a market order will be placed. Example usage: sell_stock('AAPL', 10) or sell_stock('AAPL', 10, limit_price=150.00)",
 )
-def sell_stock(ticker: str, quantity: int, limit_price: float = None) -> str:
+def sell_stock(ticker: str, quantity: int, limit_price: Optional[float] = None) -> str:
     """Sells a stock for `ticker` and `quantity`.
 
     Args:

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -36,10 +36,12 @@ class GeminiClient(BaseLLMClient):
 
     def __init__(self, model: str, base_url: Optional[str] = None, **kwargs):
         super().__init__(model, base_url, **kwargs)
+        self.model = model
+        self.base_url = base_url
 
     def get_llm(self) -> Any:
         """Return configured ChatGoogleGenerativeAI instance."""
-        llm_kwargs = {"model": self.model}
+        llm_kwargs: Dict[str, Any] = {"model": self.model}
 
         for key in ("timeout", "max_retries", "google_api_key", "callbacks"):
             if key in self.kwargs:
@@ -60,7 +62,6 @@ class GeminiClient(BaseLLMClient):
             else:
                 # Gemini 2.5: map to thinking_budget
                 llm_kwargs["thinking_budget"] = -1 if thinking_level == "high" else 0
-
         return NormalizedChatGoogleGenerativeAI(**llm_kwargs)
 
     def validate_model(self) -> bool:

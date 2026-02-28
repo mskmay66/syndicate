@@ -1,3 +1,4 @@
+from typing import Optional
 from langchain_anthropic import ChatAnthropic
 
 from .base_client import BaseLLMClient
@@ -10,10 +11,12 @@ class AnthropicClient(BaseLLMClient):
     def __init__(
         self,
         model: str,
-        base_url: str = "https://api.anthropic.com/v1",
+        base_url: Optional[str] = "https://api.anthropic.com/v1",
         **kwargs,
     ):
         super().__init__(model, base_url, **kwargs)
+        self.model = model
+        self.base_url = base_url
 
     def get_llm(self) -> ChatAnthropic:
         """Get the Anthropic LLM client instance."""

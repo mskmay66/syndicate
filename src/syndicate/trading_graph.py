@@ -104,28 +104,6 @@ class TradingGraph:
             workflow.add_node(agent, agent_nodes[agent])
 
         for i, agent in enumerate(execution_order):
-            # workflow.add_node(agent, agent_nodes[agent])
-
-            # # add tools
-            # tool_node = tool_nodes.get(agent)
-            # if tool_node:
-            #     tool_node_name = f"{agent}_tools"
-            #     workflow.add_node(tool_node_name, tool_node)
-
-            #     next_node = (
-            #         self.selected_agents[i + 1]
-            #         if i + 1 < len(self.selected_agents)
-            #         else "trader"
-            #     )
-            #     workflow.add_conditional_edges(
-            #         agent,
-            #         should_use_tools,
-            # {
-            #     "tools": tool_node_name,
-            #     "continue": next_node,
-            # },
-            #     )
-            #     workflow.add_edge(tool_node_name, agent)
             is_last = i == len(execution_order) - 1
             next_node = END if is_last else execution_order[i + 1]
 

@@ -64,15 +64,15 @@ def _extract_article_data(article: dict) -> dict:
 )
 def get_news(tickers: List[str], look_back: int = 7) -> str:
     keys_to_extract = ["source", "headline", "summary", "published_at"]
-    tickers = ",".join(tickers)
+    symbols = ",".join(tickers)
     current_time = datetime.now()
     start_time = current_time - timedelta(days=look_back)
     news_request = NewsRequest(
-        symbols=tickers, start=start_time, end=current_time, limit=50
+        symbols=symbols, start=start_time, end=current_time, limit=50
     )
     news_response = news_client.get_news(news_request)
     if not news_response:
-        return f"Failed to get news for {tickers}. Reason: {news_response['message']}"
+        return f"Failed to get news for {symbols}. Reason: {news_response['message']}"
     articles = news_response["news"]
     formatted_response = [
         {key: dict(article).get(key) for key in keys_to_extract} for article in articles
