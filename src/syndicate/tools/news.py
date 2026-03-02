@@ -13,7 +13,9 @@ from langchain_core.tools import tool
 API_KEY = os.getenv("ALPACA_API_KEY")
 API_SECRET_KEY = os.getenv("ALPACA_API_SECRET_KEY")
 
-news_client = NewsClient(API_KEY, API_SECRET_KEY)
+news_client = None
+if API_KEY and API_SECRET_KEY:
+    news_client = NewsClient(API_KEY, API_SECRET_KEY)
 
 
 def _extract_article_data(article: dict) -> dict:
@@ -70,6 +72,8 @@ def get_news(tickers: List[str], look_back: int = 7) -> str:
     news_request = NewsRequest(
         symbols=symbols, start=start_time, end=current_time, limit=50
     )
+    if not news_client:
+        return "Alpaca API key and secret key are required to use this tool. Please set the ALPACA_API_KEY and ALPACA_API_SECRET_KEY environment variables."
     news_response = news_client.get_news(news_request)
     if not news_response:
         return f"Failed to get news for {symbols}. Reason: {news_response['message']}"

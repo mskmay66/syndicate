@@ -12,6 +12,7 @@ wheels/
 # User specific files
 agent.json
 watchlist.json
+services.json
 
 # logs
 .logs/*

@@ -11,7 +11,9 @@ API_KEY = os.getenv("ALPACA_API_KEY")
 API_SECRET_KEY = os.getenv("ALPACA_API_SECRET_KEY")
 PAPER = os.getenv("ALPACA_PAPER", "true").lower() == "true"
 
-trade_client = TradingClient(API_KEY, API_SECRET_KEY, paper=PAPER)
+trade_client = None
+if API_KEY and API_SECRET_KEY:
+    trade_client = TradingClient(API_KEY, API_SECRET_KEY, paper=PAPER)
 
 
 def _trade(
@@ -40,6 +42,10 @@ def _trade(
         order = MarketOrderRequest(
             symbol=ticker, qty=quantity, side=side, time_in_force=TimeInForce.DAY
         )
+    if not trade_client:
+        raise Exception(
+            "Alpaca API key and secret key are required to use this tool. Please set the ALPACA_API_KEY and ALPACA_API_SECRET_KEY environment variables."
+        )
     trade_client.submit_order(order)
 
 
@@ -61,6 +67,9 @@ def _get_account_summary() -> str:
         "maintenance_margin",
         "multiplier",
     ]
+    if not trade_client:
+        return "Alpaca API key and secret key are required to use this tool. Please set the ALPACA_API_KEY and ALPACA_API_SECRET_KEY environment variables."
+
     account_summary = trade_client.get_account()
     if not account_summary:
         return f"Failed to get account summary. Reason: {account_summary['message']}"

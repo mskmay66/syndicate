@@ -9,7 +9,9 @@ from alpaca.data.requests import StockLatestQuoteRequest
 API_KEY = os.getenv("ALPACA_API_KEY")
 API_SECRET_KEY = os.getenv("ALPACA_API_SECRET_KEY")
 
-data_client = StockHistoricalDataClient(API_KEY, API_SECRET_KEY)
+data_client = None
+if API_KEY and API_SECRET_KEY:
+    data_client = StockHistoricalDataClient(API_KEY, API_SECRET_KEY)
 
 
 @tool(
@@ -21,6 +23,8 @@ def get_latest_quote(tickers: List[str]) -> str:
     if isinstance(tickers, str):
         tickers = [tickers]
     request_params = StockLatestQuoteRequest(symbol_or_symbols=tickers)
+    if not data_client:
+        return "Alpaca API key and secret key are required to use this tool. Please set the ALPACA_API_KEY and ALPACA_API_SECRET_KEY environment variables."
     quote = data_client.get_stock_latest_quote(request_params)
     if not quote:
         return (
