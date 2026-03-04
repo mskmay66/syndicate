@@ -1,4 +1,3 @@
-import os
 import json
 from typing import List
 
@@ -6,8 +5,10 @@ from langchain_core.tools import tool
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
 
-API_KEY = os.getenv("ALPACA_API_KEY")
-API_SECRET_KEY = os.getenv("ALPACA_API_SECRET_KEY")
+from ..secrets import get_secret_from_keyring
+
+API_KEY = get_secret_from_keyring("ALPACA", "default")
+API_SECRET_KEY = get_secret_from_keyring("ALPACA", "secret")
 
 data_client = None
 if API_KEY and API_SECRET_KEY:

@@ -27,6 +27,7 @@ def build_trader(llm):
                     " If you or any other assistant has the FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** or deliverable,"
                     " use the buy_stock or sell_stock tools to execute those transactions."
                     " Always report what you bought and sold in your response so the team knows what you did."
+                    " Always make your report your final action, buy or sell stock before reporting"
                     " You have access to the following tools: {tool_names}.\n{system_message}"
                     "For your reference, the current date is {current_date}.  We are looking at the following companies: {tickers}"
                     "Here is the current situation based on the fundementals and news analysis:\n{curr_situation}",

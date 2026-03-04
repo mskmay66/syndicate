@@ -1,9 +1,9 @@
 from langchain_openai import ChatOpenAI
 from typing import Optional
-import os
 
 from .base_client import BaseLLMClient
 from .validate import validate_model
+from ..secrets import get_secret_from_keyring
 
 
 class UnifiedChatOpenAI(ChatOpenAI):
@@ -45,12 +45,12 @@ class OpenAIClient(BaseLLMClient):
 
         if self.provider == "xai":
             llm_kwargs["base_url"] = "https://api.x.ai/v1"
-            api_key = os.environ.get("XAI_API_KEY")
+            api_key = get_secret_from_keyring("XAI_API_KEY", "default")
             if api_key:
                 llm_kwargs["api_key"] = api_key
         elif self.provider == "openrouter":
             llm_kwargs["base_url"] = "https://openrouter.ai/api/v1"
-            api_key = os.environ.get("OPENROUTER_API_KEY")
+            api_key = get_secret_from_keyring("OPENROUTER_API_KEY", "default")
             if api_key:
                 llm_kwargs["api_key"] = api_key
         elif self.provider == "ollama":
@@ -58,7 +58,7 @@ class OpenAIClient(BaseLLMClient):
             llm_kwargs["api_key"] = "ollama"  # Ollama doesn't require auth
         elif self.provider == "kimi":
             llm_kwargs["base_url"] = "https://api.moonshot.ai/v1"
-            api_key = os.environ.get("KIMI_API_KEY")
+            api_key = get_secret_from_keyring("KIMI_API_KEY", "default")
             if api_key:
                 llm_kwargs["api_key"] = api_key
         elif self.base_url:

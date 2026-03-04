@@ -1,4 +1,3 @@
-import os
 import json
 from typing import List
 from datetime import datetime, timedelta
@@ -9,9 +8,10 @@ from alpaca.data.historical.news import NewsClient
 from alpaca.data.requests import NewsRequest
 from langchain_core.tools import tool
 
+from ..secrets import get_secret_from_keyring
 
-API_KEY = os.getenv("ALPACA_API_KEY")
-API_SECRET_KEY = os.getenv("ALPACA_API_SECRET_KEY")
+API_KEY = get_secret_from_keyring("ALPACA", "default")
+API_SECRET_KEY = get_secret_from_keyring("ALPACA", "secret")
 
 news_client = None
 if API_KEY and API_SECRET_KEY:

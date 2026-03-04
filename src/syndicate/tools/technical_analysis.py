@@ -39,9 +39,6 @@ class AlphaVantageInterface:
             return {"error": f"An error occurred: {str(e)}"}
 
 
-interface = AlphaVantageInterface()
-
-
 @tool(
     "get_indicator",
     return_direct=True,
@@ -67,6 +64,11 @@ def get_indicator(symbol: str, indicator: str, interval: str = "daily") -> str:
         "atr": ("ATR", None),
         "vwma": ("VWMA", "close"),
     }
+
+    if os.environ.get("ALPHA_VANTAGE_API_KEY") is None:
+        return "Alpha Vantage API key not found. Please set the 'ALPHA_VANTAGE_API_KEY' environment variable to use this tool."
+
+    interface = AlphaVantageInterface()
 
     if indicator not in supported_indicators:
         raise ValueError(
