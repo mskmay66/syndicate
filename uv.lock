@@ -2336,7 +2336,6 @@ dependencies = [
     { name = "textual" },
     { name = "torch" },
     { name = "transformers" },
-    { name = "typer" },
     { name = "yfinance" },
 ]
 
@@ -2366,7 +2365,6 @@ requires-dist = [
     { name = "textual", specifier = ">=8.0.2" },
     { name = "torch", specifier = ">=2.10.0" },
     { name = "transformers", specifier = ">=5.1.0" },
-    { name = "typer", specifier = ">=0.23.1" },
     { name = "yfinance", specifier = ">=1.2.0" },
 ]
 

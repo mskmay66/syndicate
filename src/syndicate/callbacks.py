@@ -1,8 +1,7 @@
 import os
 import json
-import typer
-from typer import Context
 from datetime import datetime
+from typing import Dict, Any, Optional
 
 from .models.llm import LLMConfig
 from .models.trade_state import TradeState
@@ -11,15 +10,10 @@ from .trading_graph import TradingGraph
 from .secrets import get_secret_from_keyring, add_secret_to_keyring
 from .log_config import setup_logging
 
-app = typer.Typer(
-    help="Syndicate CLI - A command-line interface for the Syndicate trading agent.",
-    no_args_is_help=True,
-)
 logger = setup_logging(__name__, ".logs/syndicate.log")
-_initialized = False
 
 
-def _load_agent_choice() -> LLMConfig:
+def load_agent_choice() -> LLMConfig:
     """Load the user's agent choice from the agent.json file.
 
     Returns:
@@ -42,7 +36,7 @@ def _load_agent_choice() -> LLMConfig:
     return agent_choice
 
 
-def _load_watchlist() -> Watchlist:
+def load_watchlist() -> Watchlist:
     """Load the user's watchlist from the watchlist.json file.
 
     Returns:
@@ -60,68 +54,50 @@ def _load_watchlist() -> Watchlist:
     return watchlist
 
 
-@app.callback(invoke_without_command=True)
-def main(ctx: Context) -> None:
-    """Main entry point for the Syndicate CLI."""
-    logger.info("Entered main callback")
-    logger.info(f"Running Subcommand: {ctx.invoked_subcommand}")
-    global _initialized
-    if not _initialized:
-        logger.info("Initializing Syndicate CLI...")
-        ctx.obj = {
-            "agent_choice": _load_agent_choice(),
-            "watchlist": _load_watchlist(),
-        }
-        _initialized = True
-
-
-@app.command()
-def add_secret(service_name: str, username: str, secret: str):
+def add_secret(service_name: str, username: str, secret: str) -> None:
     """Adds a secret to the keyring."""
     add_secret_to_keyring(service_name, username, secret)
     with open("services.json", "r") as f:
         services = []
         if os.path.exists("services.json") and os.path.getsize("services.json") != 0:
             services = json.load(f)
+            logger.info(f"Loaded existing services from services.json: {services}")
 
     with open("services.json", "w") as f:
         services.append({"name": service_name, "username": username})
         json.dump(services, f, indent=2)
-    # set_env_vars(secret, service_name)
+        logger.info(
+            f"Added service {service_name} with username {username} to services.json"
+        )
 
 
-@app.command()
-def get_secret(service_name: str, username: str):
+def get_secret(service_name: str, username: str) -> Optional[str]:
     """Retrieves a secret from the keyring."""
     secret = get_secret_from_keyring(service_name, username)
     if secret:
         logger.info(f"Got secret for {service_name} and {username}")
-        typer.echo(secret)
+        return secret
     else:
         logger.warning(
             f"No secret found for {service_name} and {username}. Please add the secret using 'syndicate add-secret {service_name} {username} <secret>'"
         )
+        return None
 
 
-@app.command()
-def run(ctx: Context):
+def run(ctx: Dict[str, Any]) -> None:
     """Starts the Syndicate agent."""
     inital_state = TradeState.model_validate(
         {
             "current_date": datetime.now().strftime("%Y-%m-%d"),
-            "tickers": ctx.obj["watchlist"].tickers,
+            "tickers": ctx["watchlist"].tickers,
             "fundementals_report": "",
             "news_report": "",
             "messages": [],
         }
     )
 
-    graph = TradingGraph(ctx.obj["agent_choice"])
+    graph = TradingGraph(ctx["agent_choice"])
     trading_graph = graph.build_graph()
 
     result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
     logger.info(f"Final result: {result}")
-
-
-if __name__ == "__main__":
-    app()
