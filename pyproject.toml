@@ -30,7 +30,7 @@ dependencies = [
 ]
 
 [project.scripts]
-syndicate = "syndicate.cli:app"
+syndicate = "syndicate.app.syndicate:main"
 
 [build-system]
 requires = ["hatchling"]
