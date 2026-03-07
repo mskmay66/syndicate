@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "alpaca-py>=0.43.2",
+    "art>=6.5",
     "httpx>=0.28.1",
     "keyring>=25.7.0",
     "langchain>=1.2.10",
@@ -22,6 +23,7 @@ dependencies = [
     "pandas>=3.0.0",
     "pydantic>=2.12.5",
     "pytz>=2025.2",
+    "textual>=8.0.2",
     "torch>=2.10.0",
     "transformers>=5.1.0",
     "typer>=0.23.1",
