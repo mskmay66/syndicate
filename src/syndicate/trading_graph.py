@@ -6,7 +6,12 @@ from langgraph.prebuilt import ToolNode
 from .models.trade_state import TradeState
 from .models.llm import LLMConfig
 from .llm_clients import create_llm_client
-from .agents import build_fundementals_analyst, build_news_analyst, build_trader
+from .agents import (
+    build_fundementals_analyst,
+    build_news_analyst,
+    build_technical_analyst,
+    build_trader,
+)
 from .tools import (
     get_fundementals,
     get_balance_sheet,
@@ -18,6 +23,7 @@ from .tools import (
     buy_stock,
     sell_stock,
     get_account_summary,
+    get_indicator,
 )
 
 
@@ -45,6 +51,7 @@ class TradingGraph:
                 get_news,
                 get_global_news,
             ],
+            "technical_tools": [get_indicator, get_latest_quote],
             "trader_tools": [
                 get_latest_quote,
                 buy_stock,
@@ -63,6 +70,7 @@ class TradingGraph:
         return {
             "fundementals": ToolNode(tools=tools.get("fundementals_tools", [])),
             "news": ToolNode(tools=tools.get("news_tools", [])),
+            "technical": ToolNode(tools=tools.get("technical_tools", [])),
             "trader": ToolNode(tools=tools.get("trader_tools", [])),
         }
 
@@ -79,6 +87,7 @@ class TradingGraph:
         return {
             "fundementals": build_fundementals_analyst(llm),
             "news": build_news_analyst(llm),
+            "technical": build_technical_analyst(llm),
             "trader": build_trader(llm),
         }
 
