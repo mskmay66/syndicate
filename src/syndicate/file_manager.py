@@ -4,10 +4,10 @@ from typing import Dict
 from platformdirs import user_config_dir, user_data_dir
 
 appname = "syndicate"
-appauthor = "mwmay"
+appuser = "mwmay"
 
-config_dir = user_config_dir(appname, appauthor)
-data_dir = user_data_dir(appname, appauthor)
+config_dir = user_config_dir(appname, appuser)
+data_dir = user_data_dir(appname, appuser)
 
 
 def add_config_file(data: Dict, name: str):
