@@ -21,6 +21,7 @@ dependencies = [
     "langchain-qwq>=0.3.4",
     "langgraph>=1.0.8",
     "pandas>=3.0.0",
+    "platformdirs>=4.9.2",
     "pydantic>=2.12.5",
     "pytz>=2025.2",
     "textual>=8.0.2",
@@ -31,6 +32,7 @@ dependencies = [
 
 [project.scripts]
 syndicate = "syndicate.app.syndicate:main"
+syndicate-run = "syndicate.__main__"
 
 [build-system]
 requires = ["hatchling"]

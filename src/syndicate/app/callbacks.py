@@ -3,55 +3,12 @@ import json
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-from .models.llm import LLMConfig
-from .models.trade_state import TradeState
-from .models.watchlist import Watchlist
-from .trading_graph import TradingGraph
-from .secrets import get_secret_from_keyring, add_secret_to_keyring
-from .log_config import setup_logging
+from ..models.trade_state import TradeState
+from ..trading_graph import TradingGraph
+from ..secrets import get_secret_from_keyring, add_secret_to_keyring
+from ..log_config import setup_logging
 
 logger = setup_logging(__name__, ".logs/syndicate.log")
-
-
-def load_agent_choice() -> LLMConfig:
-    """Load the user's agent choice from the agent.json file.
-
-    Returns:
-        LLMConfig: The user's agent choice as an LLMConfig instance.
-    """
-    logger.info("Loading agent choice from agent.json")
-    if not os.path.exists("agent.json"):
-        logger.error(
-            "agent.json not found. Please create an agent.json file with your agent choice."
-        )
-        raise FileNotFoundError(
-            "agent.json not found. Please create an agent.json file with your agent choice."
-        )
-
-    with open("agent.json", "r") as f:
-        agent_choice = LLMConfig.model_validate_json(f.read())
-    logger.info(
-        "Syndicate agent installed successfully. You can now run 'syndicate start' to start the agent."
-    )
-    return agent_choice
-
-
-def load_watchlist() -> Watchlist:
-    """Load the user's watchlist from the watchlist.json file.
-
-    Returns:
-        Watchlist: The user's watchlist as a Watchlist instance.
-    """
-    logger.info("Loading watchlist from watchlist.json")
-    if not os.path.exists("watchlist.json"):
-        logger.warning("watchlist.json not found. Creating a default watchlist.")
-        default_watchlist = Watchlist(tickers=["AAPL", "GOOG", "TSLA"])
-        with open("watchlist.json", "w") as f:
-            f.write(default_watchlist.model_dump_json(indent=2))
-
-    with open("watchlist.json", "r") as f:
-        watchlist = Watchlist.model_validate_json(f.read())
-    return watchlist
 
 
 def add_secret(service_name: str, username: str, secret: str) -> None:

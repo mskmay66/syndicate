@@ -1,4 +1,5 @@
 from typing import Literal
+from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Static, Button
 from textual.containers import HorizontalGroup, Container, Vertical
@@ -37,6 +38,16 @@ class Syndicate(App):
     def on_mount(self) -> None:
         """Called when the app is mounted. Load the watchlist and display it."""
         self.title = text2art("Syndicate", font="slant")
+
+    @on(Button.Pressed, "#login_button")
+    def handle_login(self) -> None:
+        """Handle the login button press."""
+        pass
+
+    @on(Button.Pressed, "#signup_button")
+    def handle_signup(self) -> None:
+        """Handle the signup button press."""
+        pass
 
 
 if __name__ == "__main__":
