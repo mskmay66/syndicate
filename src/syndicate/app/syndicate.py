@@ -3,7 +3,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Header, Static, Button, Input, RadioSet, RadioButton
-from textual.containers import HorizontalGroup, Container, Vertical
+from textual.containers import HorizontalGroup, Container, Vertical, VerticalScroll
 from textual.reactive import reactive
 from art import text2art
 import asyncio
@@ -69,20 +69,21 @@ class Setup(Vertical):
     """A Textual app for user login and signup."""
 
     def compose(self) -> ComposeResult:
-        yield Static(
-            "Welcome to Syndicate! Let's start by configuring your trading agent.",
-            id="setup_title",
-        )
-        yield Input(
-            placeholder="Enter your watchlist (comma-separated tickers)",
-            id="watchlist_input",
-        )
+        with VerticalScroll(id="setup_scroll"):
+            yield Static(
+                "Welcome to Syndicate! Let's start by configuring your trading agent.",
+                id="setup_title",
+            )
+            yield Input(
+                placeholder="Enter your watchlist (comma-separated tickers)",
+                id="watchlist_input",
+            )
 
-        yield ProviderChoice(id="provider_choice")
-        yield ModelChoiceFromProvider(id="model_choice_from_provider")
-        yield ApiKeyInput(id="model_api", provider="llm")
-        yield ApiKeyInput(id="broker_api", provider="alpaca")
-        yield ApiKeyInput(id="technical_api", provider="tech")
+            yield ProviderChoice(id="provider_choice")
+            yield ModelChoiceFromProvider(id="model_choice_from_provider")
+            yield ApiKeyInput(id="model_api", provider="llm")
+            yield ApiKeyInput(id="broker_api", provider="alpaca")
+            yield ApiKeyInput(id="technical_api", provider="alpha vantage")
 
     @on(RadioSet.Changed, "#provider_choice")
     def provider_changed(self, event: RadioSet.Changed) -> None:

@@ -1,13 +1,14 @@
+$accent: #BD93F9;
+
 Header {
     height: 7; /* Increase height */
-    background: #2C001E;
-    color: #FCE94F;
+    background: #243038;
+    color: #8AD4A1;
 }
 
 Screen {
-    background: #2C001E;
+    background: #243038;
 }
-
 
 Splash {
     width: 100%;
@@ -16,14 +17,34 @@ Splash {
 
 Input {
     background: transparent;
+    margin-bottom: 2;
+    border: round transparent
+}
+
+Input:focus {
+    border: round $accent;
 }
 
 RadioSet {
     background: transparent;
+    margin-bottom: 2;
+    border: round transparent
+}
+
+RadioSet:focus {
+    border: round $accent;
 }
 
 RadioButton {
     background: transparent;
+}
+
+RadioButton > .radio--button {
+    background: transparent;
+}
+
+RadioButton.-selected > .radio--button {
+    background: $accent
 }
 
 #splash {
