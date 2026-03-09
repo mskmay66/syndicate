@@ -1,17 +1,20 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
+from .file_manager import generate_log_path
+
 
 def setup_logging(
-    name, log_file, level=logging.INFO, max_bytes=10 * 1024 * 1024, backup_count=5
+    name, service_name, level=logging.INFO, max_bytes=10 * 1024 * 1024, backup_count=5
 ):
     logger = logging.getLogger(name)
     logger.setLevel(level)
 
     logger.propagate = False
 
+    log_path = generate_log_path(service_name)
     handler = RotatingFileHandler(
-        log_file, maxBytes=max_bytes, backupCount=backup_count
+        log_path, maxBytes=max_bytes, backupCount=backup_count
     )
     formatter = logging.Formatter(
         "[%(asctime)s] %(filename)s:%(lineno)d - %(levelname)s - %(message)s",

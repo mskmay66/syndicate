@@ -1,17 +1,44 @@
 Header {
     height: 7; /* Increase height */
-    background: $boost;
-    color: yellow;
+    background: $background;
+    color: green;
+}
+
+Splash {
+    width: 100%;
+    height: 100%;
+}
+
+#splash {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+}
+
+#splash_title {
+    text-align: center;
+    margin-bottom: 2;
+    margin-top: 10;
+}
+
+#button_group {
+    width: 100%;
+    align-horizontal: center;
 }
 
 Button {
+    margin: 0 2;
+}
+
+/* Button {
     background: yellow;
     margin: 0 10;
     align: center middle;
 }
 
 HorizontalGroup {
-    width: auto;     /* IMPORTANT */
+    width: auto;
+    align-horizontal: center;
 }
 
 #login {
@@ -26,8 +53,8 @@ HorizontalGroup {
     align-horizontal: center;
 }
 
-#login_title {
+#splash_title {
     text-align: center;
     margin-bottom: 2;
     color: $text;
-}
+} */

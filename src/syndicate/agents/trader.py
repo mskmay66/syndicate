@@ -2,7 +2,7 @@ from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from ..tools import get_account_summary, buy_stock, sell_stock, get_latest_quote
 
-logger = setup_logging(__name__, ".logs/trader.log")
+logger = setup_logging(__name__, "trader")
 
 
 def build_trader(llm):

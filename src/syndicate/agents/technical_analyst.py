@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from ..log_config import setup_logging
 from ..tools import get_indicator, get_latest_quote
 
-logger = setup_logging(__name__, ".logs/technical_analyst.log")
+logger = setup_logging(__name__, "technical_analyst")
 
 
 def build_technical_analyst(llm):

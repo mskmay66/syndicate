@@ -4,6 +4,7 @@ from .openai_client import OpenAIClient
 from .anthropic_client import AnthropicClient
 from .gemini_client import GeminiClient
 from .qwen_client import QwenClient
+from .validate import VALID_MODELS
 
 __all__ = [
     "BaseLLMClient",
@@ -12,4 +13,5 @@ __all__ = [
     "AnthropicClient",
     "GeminiClient",
     "QwenClient",
+    "VALID_MODELS",
 ]

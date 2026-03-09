@@ -9,8 +9,8 @@ from alpaca.trading.enums import OrderSide, TimeInForce
 
 from ..secrets import get_secret_from_keyring
 
-API_KEY = get_secret_from_keyring("ALPACA", "default")
-API_SECRET_KEY = get_secret_from_keyring("ALPACA", "secret")
+API_KEY = get_secret_from_keyring("ALPACA_DEFAULT")
+API_SECRET_KEY = get_secret_from_keyring("ALPACA_SECRET")
 
 PAPER = os.getenv("ALPACA_PAPER", "true").lower() == "true"
 

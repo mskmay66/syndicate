@@ -1,10 +1,11 @@
 import os
+import getpass
 import json
 from typing import Dict
 from platformdirs import user_config_dir, user_data_dir
 
 appname = "syndicate"
-appuser = "mwmay"
+appuser = getpass.getuser()
 
 config_dir = user_config_dir(appname, appuser)
 data_dir = user_data_dir(appname, appuser)
@@ -73,3 +74,19 @@ def read_data_file(name: str) -> Dict:
 
     with open(file_path, "r") as f:
         return json.load(f)
+
+
+def generate_log_path(name: str) -> str:
+    """Generates a log file path in the data directory.
+
+    Args:
+        name (str): The name of the service to log.
+
+    Returns:
+        str: Path to the log file for the specified service.
+    """
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+
+    log_path = os.path.join(data_dir, f"{name}.log")
+    return log_path

@@ -64,7 +64,7 @@ VALID_MODELS = {
         "qwen2-7b-vl-instruct",
         "qwen2-7b-vl-chat",
     ],
-    "kimi": ["kimi-k2-instruct-0905", "kimi-k2-chat-0905", "kimi-k2-0905-preview"],
+    "moonshot": ["kimi-k2-instruct-0905", "kimi-k2-chat-0905", "kimi-k2-0905-preview"],
 }
 
 

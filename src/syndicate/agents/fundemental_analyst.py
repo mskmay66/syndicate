@@ -8,7 +8,7 @@ from ..tools import (
     get_cashflow,
 )
 
-logger = setup_logging(__name__, ".logs/fundementals_analyst.log")
+logger = setup_logging(__name__, "fundementals_analyst")
 
 
 def build_fundementals_analyst(llm):

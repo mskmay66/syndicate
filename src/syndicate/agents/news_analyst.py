@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from ..tools import get_news, get_global_news
 
 
-logger = setup_logging(__name__, ".logs/news_analyst.log")
+logger = setup_logging(__name__, "news_analyst")
 
 
 def build_news_analyst(llm):

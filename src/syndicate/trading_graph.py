@@ -28,7 +28,11 @@ from .tools import (
 
 
 class TradingGraph:
-    def __init__(self, llm_config: LLMConfig, selected_agents=["news", "fundementals"]):
+    def __init__(
+        self,
+        llm_config: LLMConfig,
+        selected_agents=["news", "fundementals", "technical"],
+    ):
         self.llm_config = llm_config
         self.selected_agents = selected_agents
         self.llm = create_llm_client(**self.llm_config.model_dump()).get_llm()

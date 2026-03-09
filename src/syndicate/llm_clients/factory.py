@@ -12,7 +12,7 @@ def create_llm_client(
 ) -> BaseLLMClient:
     """Factory function to create LLM client instances based on provider."""
     provider = provider.lower()
-    if provider in ("openai", "xai", "openrouter", "ollama", "kimi"):
+    if provider in ("openai", "xai", "openrouter", "ollama", "moonshot"):
         return OpenAIClient(model=model, base_url=base_url, provider=provider, **kwargs)
     elif provider == "anthropic":
         return AnthropicClient(model=model, base_url=base_url, **kwargs)

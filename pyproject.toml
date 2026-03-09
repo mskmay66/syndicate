@@ -32,7 +32,7 @@ dependencies = [
 
 [project.scripts]
 syndicate = "syndicate.app.syndicate:main"
-syndicate-run = "syndicate.__main__"
+syndicate-run = "syndicate.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -42,4 +42,5 @@ build-backend = "hatchling.build"
 dev = [
     "pytest>=9.0.2",
     "ruff>=0.15.1",
+    "textual-dev>=1.8.0",
 ]

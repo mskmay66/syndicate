@@ -1,11 +1,13 @@
-import os
+import getpass
 import keyring
-import logging
+from .log_config import setup_logging
 
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__, "secrets")
+
+username = getpass.getuser()
 
 
-def add_secret_to_keyring(service_name: str, username: str, secret: str) -> None:
+def add_secret_to_keyring(service_name: str, secret: str) -> None:
     """
     Add a secret to the keyring.
 
@@ -21,7 +23,7 @@ def add_secret_to_keyring(service_name: str, username: str, secret: str) -> None
         logger.error(f"Failed to add secret for {service_name}. Reason: {str(e)}")
 
 
-def get_secret_from_keyring(service_name: str, username: str) -> str:
+def get_secret_from_keyring(service_name: str) -> str:
     """
     Retrieve a secret from the keyring.
 
@@ -42,17 +44,3 @@ def get_secret_from_keyring(service_name: str, username: str) -> str:
     except Exception as e:
         logger.error(f"Failed to retrieve secret for {service_name}. Reason: {str(e)}")
         return ""
-
-
-def set_env_vars(secret: str, service: str) -> None:
-    """
-    Set environment variables for the given secrets.
-
-    Args:
-        secrets (Dict[str, str]): A dictionary of secrets where the key is the environment variable name and the value is the secret value.
-    """
-    if secret:
-        os.environ[service] = secret
-        logger.info(f"Environment variable {service} set successfully.")
-    else:
-        logger.warning(f"Secret for {service} is empty. Environment variable not set.")
