@@ -5,6 +5,7 @@ from .file_manager import (
     add_config_file,
     add_data_file,
 )
+from .secrets import add_secret_to_keyring, get_secret_from_keyring
 
 __all__ = [
     "create_llm_client",
@@ -12,4 +13,6 @@ __all__ = [
     "read_data_file",
     "add_config_file",
     "add_data_file",
+    "add_secret_to_keyring",
+    "get_secret_from_keyring",
 ]

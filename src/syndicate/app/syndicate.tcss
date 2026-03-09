@@ -1,12 +1,29 @@
 Header {
     height: 7; /* Increase height */
-    background: $background;
-    color: green;
+    background: #2C001E;
+    color: #FCE94F;
 }
+
+Screen {
+    background: #2C001E;
+}
+
 
 Splash {
     width: 100%;
     height: 100%;
+}
+
+Input {
+    background: transparent;
+}
+
+RadioSet {
+    background: transparent;
+}
+
+RadioButton {
+    background: transparent;
 }
 
 #splash {

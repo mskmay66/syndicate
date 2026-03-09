@@ -19,6 +19,21 @@ logging.basicConfig(
 )
 
 
+class ApiKeyInput(Vertical):
+    """A Textual app for user login and signup."""
+
+    def __init__(self, id: str, provider: str):
+        super().__init__(id=id)
+        self.provider = provider
+
+    def compose(self) -> ComposeResult:
+        yield Static(
+            f"Enter your API key for your {self.provider}:",
+            id="api_key_input_title",
+        )
+        yield Input(placeholder="Enter your API key", id="api_key_input")
+
+
 class ProviderChoice(Vertical):
     """A Textual app for user login and signup."""
 
@@ -65,6 +80,9 @@ class Setup(Vertical):
 
         yield ProviderChoice(id="provider_choice")
         yield ModelChoiceFromProvider(id="model_choice_from_provider")
+        yield ApiKeyInput(id="model_api", provider="llm")
+        yield ApiKeyInput(id="broker_api", provider="alpaca")
+        yield ApiKeyInput(id="technical_api", provider="tech")
 
     @on(RadioSet.Changed, "#provider_choice")
     def provider_changed(self, event: RadioSet.Changed) -> None:

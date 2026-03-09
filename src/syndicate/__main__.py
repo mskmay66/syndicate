@@ -8,7 +8,7 @@ from .trading_graph import TradingGraph
 from .log_config import setup_logging
 from .file_manager import read_config_file
 
-logger = setup_logging(__name__, ".logs/syndicate.log")
+logger = setup_logging(__name__, "syndicate")
 
 
 def _load_agent_choice() -> LLMConfig:
