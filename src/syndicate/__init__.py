@@ -6,6 +6,7 @@ from .file_manager import (
     add_data_file,
 )
 from .secrets import add_secret_to_keyring, get_secret_from_keyring
+from .app import convert_input_to_cron_expression
 
 __all__ = [
     "create_llm_client",
@@ -15,4 +16,5 @@ __all__ = [
     "add_data_file",
     "add_secret_to_keyring",
     "get_secret_from_keyring",
+    "convert_input_to_cron_expression",
 ]

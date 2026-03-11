@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "alpaca-py>=0.43.2",
     "art>=6.5",
+    "crontab>=1.0.5",
     "httpx>=0.28.1",
     "keyring>=25.7.0",
     "langchain>=1.2.10",

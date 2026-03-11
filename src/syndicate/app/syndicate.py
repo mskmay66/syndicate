@@ -71,7 +71,7 @@ class Setup(Vertical):
     def compose(self) -> ComposeResult:
         with VerticalScroll(id="setup_scroll"):
             yield Static(
-                "Welcome to Syndicate! Let's start by configuring your trading agent.",
+                "Enter a list of tickers you want to trade",
                 id="setup_title",
             )
             yield Input(
@@ -106,7 +106,10 @@ class SetupScreen(Screen):  #
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
-        yield Static("Configure your trading agent.", id="setup_message")
+        yield Static(
+            "Welcome to Syndicate! Let's start by configuring your trading agent.",
+            id="setup_message",
+        )
         yield Container(Setup(), id="setup")
 
 

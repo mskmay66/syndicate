@@ -6,6 +6,10 @@ Header {
     color: #8AD4A1;
 }
 
+Static {
+    padding-left: 3;
+}
+
 Screen {
     background: #243038;
 }
