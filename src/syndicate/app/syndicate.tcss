@@ -1,9 +1,9 @@
-$accent: #BD93F9;
+$accent: #8AD4A1;
 
 Header {
     height: 7; /* Increase height */
-    background: #243038;
-    color: #8AD4A1;
+    background: $background;
+    color: $accent;
 }
 
 Static {
@@ -11,7 +11,7 @@ Static {
 }
 
 Screen {
-    background: #243038;
+    background: $background;
 }
 
 Splash {
@@ -21,7 +21,6 @@ Splash {
 
 Input {
     background: transparent;
-    margin-bottom: 2;
     border: round transparent
 }
 
@@ -31,8 +30,12 @@ Input:focus {
 
 RadioSet {
     background: transparent;
-    margin-bottom: 2;
-    border: round transparent
+    border: round transparent;
+    grid-size: 3;
+    grid-columns: 1fr;
+    grid-rows: auto;
+    grid-gutter: 1 2;
+    margin-bottom: 2
 }
 
 RadioSet:focus {
@@ -94,6 +97,7 @@ HorizontalGroup {
     height: auto;
     align-horizontal: center;
 }
+
 
 #splash_title {
     text-align: center;

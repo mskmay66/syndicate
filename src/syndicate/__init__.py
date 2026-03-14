@@ -1,4 +1,4 @@
-from .llm_clients import create_llm_client
+from .llm_clients import create_llm_client, VALID_MODELS
 from .file_manager import (
     read_config_file,
     read_data_file,
@@ -17,4 +17,5 @@ __all__ = [
     "add_secret_to_keyring",
     "get_secret_from_keyring",
     "convert_input_to_cron_expression",
+    "VALID_MODELS",
 ]
