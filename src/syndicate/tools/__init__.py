@@ -6,7 +6,7 @@ from .fundemetal_analysis import (
 )
 from .market import get_latest_quote
 from .news import get_news, get_global_news
-from .trading import buy_stock, sell_stock, get_account_summary
+from .trading import buy_stock, sell_stock, get_account_summary, max_loss, take_profit
 from .technical_analysis import get_indicator
 
 __all__ = [
@@ -21,4 +21,6 @@ __all__ = [
     "sell_stock",
     "get_account_summary",
     "get_indicator",
+    "max_loss",
+    "take_profit",
 ]

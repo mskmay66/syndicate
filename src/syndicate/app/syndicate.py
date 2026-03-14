@@ -2,7 +2,7 @@ from typing import Literal
 from textual import on
 from textual.app import App, ComposeResult
 from textual.screen import Screen
-from textual.widgets import Header, Static, Button
+from textual.widgets import Header, Static, Button, Footer
 from textual.containers import Container
 from art import text2art
 import logging
@@ -10,6 +10,10 @@ from textual.logging import TextualHandler
 
 from .components.setup import Setup
 from .components.splash import Splash
+
+from ..models import LLMConfig, Watchlist, GuardrailsConfig
+from ..file_manager import add_config_file
+from .callbacks import add_secret, convert_input_to_cron_expression, register_cron
 
 
 logging.basicConfig(
@@ -22,17 +26,98 @@ logging.basicConfig(
 class SetupScreen(Screen):  #
     """A Textual screen to display the setup screen."""
 
+    BINDINGS = [("f", "finish_setup", "Finish setup and enter app")]
+    guardrails = GuardrailsConfig()
+
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Static(
             "Welcome to Syndicate! Let's start by configuring your trading agent.",
             id="setup_message",
         )
-        yield Container(Setup(), id="setup")
+        yield Setup()
+        yield Footer()
 
     def on_mount(self) -> None:
         """Called when the screen is mounted. Start the typing effect."""
         self.title = text2art("Syndicate", font="slant")
+
+    def _watchlist_callback(self, watchlist: str) -> None:
+        """A callback function to handle watchlist updates."""
+        logging.info(f"Watchlist updated: {watchlist}")
+        # Here you would typically save the watchlist to a config file or state
+        self.watchlist = Watchlist(
+            tickers=[ticker.strip() for ticker in watchlist.split(",")]
+        )
+
+    def _provider_callback(self, provider: str) -> None:
+        """A callback function to handle provider updates."""
+        logging.info(f"Provider updated: {provider}")
+        self.provider = provider
+
+    def _model_callback(self, model: str) -> None:
+        """A callback function to handle model updates."""
+        logging.info(f"Model updated: {model}")
+        self.model = model
+
+    def _model_api_key_callback(self, api_key: str) -> None:
+        self.model_api_key = api_key
+
+    def _broker_api_key_callback(self, api_key: str) -> None:
+        self.broker_api_key = api_key
+
+    def _broker_secret_key_callback(self, secret_key: str) -> None:
+        self.broker_secret_key = secret_key
+
+    def _technical_api_key_callback(self, api_key: str) -> None:
+        self.technical_api_key = api_key
+
+    def _guardrails_callback(self, guardrail_name, pct) -> None:
+        self.guardrails.__setattr__(guardrail_name, pct)
+
+    def _cron_selection_callback(self, sch: str) -> None:
+        logging.info(f"Cron schedule updated: {sch}")
+        self.cron_schedule = sch
+
+    def _cron_expression_callback(self, expr: str) -> None:
+        logging.info(f"Cron expression updated: {expr}")
+        self.cron_expression = expr
+
+    def on_finish_setup(self) -> None:
+        """ "Handle the finish setup action."""
+        logging.info("Finishing setup and entering app")
+
+        # write the watchlist
+        add_config_file(self.watchlist.model_dump(), "watchlist.json")
+
+        # create the llm config
+        llm_config = LLMConfig(
+            provider=self.provider,
+            model=self.model,
+        )
+        add_config_file(llm_config.model_dump(), "agent.json")
+
+        # write a services config file with the API keys and guardrails
+        services = {
+            "ALPHA_VANTAGE_API_KEY": self.technical_api_key,
+            "ALPACA_DEFAULT": self.broker_api_key,
+            "ALPACA_SECRET_KEY": self.broker_secret_key,
+            self.provider: self.model_api_key,
+        }
+        for service, key in services.items():
+            add_secret(service, key)
+
+        # write a guardrails config file
+        add_config_file(self.guardrails.model_dump(), "guardrails.json")
+
+        # register crons
+        cron = convert_input_to_cron_expression(
+            self.cron_schedule, self.cron_expression
+        )
+        register_cron(cron)
+
+        # Here you would typically save the configuration to a file or state
+        self.app.push_screen("splash")
 
 
 class SplashScreen(Screen):
@@ -41,6 +126,7 @@ class SplashScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Container(Splash(), id="splash")
+        yield Footer()
 
     def on_mount(self) -> None:
         """Called when the screen is mounted. Start the typing effect."""

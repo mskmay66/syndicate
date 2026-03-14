@@ -1,5 +1,6 @@
 import os
 import json
+import functools
 from typing import Optional
 from langchain_core.tools import tool
 
@@ -8,11 +9,28 @@ from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce
 
 from ..secrets import get_secret_from_keyring
+from ..file_manager import read_config_file
 
 API_KEY = get_secret_from_keyring("ALPACA_DEFAULT")
 API_SECRET_KEY = get_secret_from_keyring("ALPACA_SECRET")
 
-PAPER = os.getenv("ALPACA_PAPER", "true").lower() == "true"
+guardrails_config = {}
+if os.path.exists("guardrails.json"):
+    guardrails_config = read_config_file("guardrails.json")
+
+MAX_PURCHASE = guardrails_config.get(
+    "max_purchase_amount"
+)  # Default to 10% of buying power
+MIN_CASH = guardrails_config.get(
+    "min_cash_required"
+)  # Default to 10% of portfolio value
+MAX_LOSS = guardrails_config.get("max_loss_percentage")  # Default to 10% loss
+TAKE_PROFIT = guardrails_config.get("take_profit_percentage")  # Default to 10% profit
+PAPER = guardrails_config.get("paper_trading", True)  # Default to paper trading mode
+
+WATCHLIST = read_config_file("watchlist.json").get(
+    "tickers", []
+)  # List of tickers to watch for trading opportunities
 
 trade_client = None
 if API_KEY and API_SECRET_KEY:
@@ -80,6 +98,88 @@ def _get_account_summary() -> str:
     return json.dumps(status, indent=2, default=str)
 
 
+def max_purchase_amount(allowed_pct: Optional[float]):
+    def innner(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if allowed_pct:
+                account_summary = _get_account_summary()
+                buying_power = account_summary.get("buying_power", 0)
+                max_purchase = buying_power * allowed_pct
+                if args["quantity"] * args["limit_price"] > max_purchase:
+                    args["quantity"] = int(max_purchase / args["limit_price"])
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return innner
+
+
+def min_cash_required(cash_pct: Optional[float]):
+    def inner(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            account_summary = _get_account_summary()
+            cash = account_summary.get("cash", 0)
+            port_value = account_summary.get("portfolio_value", 0)
+            if cash_pct is None or cash > port_value * cash_pct:
+                return func(*args, **kwargs)
+            else:
+                return f"Not enough cash available to place the order. Minimum required cash is {cash_pct * 100}% of portfolio value."
+
+        return wrapper
+
+    return inner
+
+
+def validate_limit_price(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        limit_price = kwargs.get("limit_price")
+        if limit_price is not None and limit_price <= 0:
+            return "Limit price must be a positive number."
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def validate_watchlist(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        ticker = args[0]  # Assuming ticker is the first argument
+        if ticker not in WATCHLIST:
+            return f"Ticker not in watchlist. Please choose from: {WATCHLIST}"
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def max_loss():
+    if not MAX_LOSS:
+        return
+
+    for ticker in WATCHLIST:
+        position = trade_client.get_open_position(ticker)
+        percentage_loss = float(position.unrealized_plpc)
+        if percentage_loss < MAX_LOSS:
+            # Logic to sell the position to prevent further losses
+            quantity = int(position.qty)
+            _trade(ticker, quantity, None, OrderSide.SELL)
+
+
+def take_profit():
+    if not TAKE_PROFIT:
+        return
+
+    for ticker in WATCHLIST:
+        position = trade_client.get_open_position(ticker)
+        percentage_gain = float(position.unrealized_plpc)
+        if percentage_gain > TAKE_PROFIT:
+            # Logic to sell the position to take profits
+            quantity = int(position.qty)
+            _trade(ticker, quantity, None, OrderSide.SELL)
+
+
 @tool(
     "get_account_summary",
     return_direct=True,
@@ -99,6 +199,10 @@ def get_account_summary() -> str:
     return_direct=True,
     description="Buys a stock for a given ticker symbol and quantity. If limit_price is not provided, a market order will be placed. Example usage: buy_stock('AAPL', 10) or buy_stock('AAPL', 10, limit_price=150.00)",
 )
+@min_cash_required(MIN_CASH)
+@max_purchase_amount(MAX_PURCHASE)
+@validate_limit_price
+@validate_watchlist
 def buy_stock(ticker: str, quantity: int, limit_price: Optional[float] = None) -> str:
     """Buys a stock for `ticker` and `quantity`.
 
@@ -122,6 +226,7 @@ def buy_stock(ticker: str, quantity: int, limit_price: Optional[float] = None) -
     return_direct=True,
     description="Sells a stock for a given ticker symbol and quantity. If limit_price is not provided, a market order will be placed. Example usage: sell_stock('AAPL', 10) or sell_stock('AAPL', 10, limit_price=150.00)",
 )
+@validate_limit_price
 def sell_stock(ticker: str, quantity: int, limit_price: Optional[float] = None) -> str:
     """Sells a stock for `ticker` and `quantity`.
 

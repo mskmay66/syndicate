@@ -9,4 +9,4 @@ class LLMConfig(BaseModel):
     ]
     model: Annotated[str, "The specific model name to use (e.g., 'gpt-4', 'claude-2')"]
     base_url: Optional[str] = None
-    api_key: Optional[str] = None
+    # api_key: Optional[str] = None
