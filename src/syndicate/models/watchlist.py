@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict
+# from pydantic import BaseModel, ConfigDict
 
 
-class Watchlist(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    tickers: list[str]
+# class Watchlist(BaseModel):
+#     model_config = ConfigDict(extra="allow")
+#     tickers: list[str]

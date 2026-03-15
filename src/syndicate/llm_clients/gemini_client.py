@@ -44,7 +44,7 @@ class GeminiClient(BaseLLMClient):
         """Return configured ChatGoogleGenerativeAI instance."""
         llm_kwargs: Dict[str, Any] = {"model": self.model}
 
-        for key in ("timeout", "max_retries", "google_api_key", "callbacks"):
+        for key in ("timeout", "max_retries", "api_key", "callbacks"):
             if key in self.kwargs:
                 llm_kwargs[key] = self.kwargs[key]
 

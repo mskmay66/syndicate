@@ -1,13 +1,10 @@
 import os
 import json
 import re
-from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Optional
 import getpass
 from crontab import CronTab
 
-from ..models.trade_state import TradeState
-from ..trading_graph import TradingGraph
 from ..secrets import get_secret_from_keyring, add_secret_to_keyring
 from ..log_config import setup_logging
 
@@ -42,23 +39,23 @@ def get_secret(
         return None
 
 
-def run(ctx: Dict[str, Any]) -> None:
-    """Starts the Syndicate agent."""
-    inital_state = TradeState.model_validate(
-        {
-            "current_date": datetime.now().strftime("%Y-%m-%d"),
-            "tickers": ctx["watchlist"].tickers,
-            "fundementals_report": "",
-            "news_report": "",
-            "messages": [],
-        }
-    )
+# def run(ctx: Dict[str, Any]) -> None:
+#     """Starts the Syndicate agent."""
+#     inital_state = TradeState.model_validate(
+#         {
+#             "current_date": datetime.now().strftime("%Y-%m-%d"),
+#             "tickers": ctx["watchlist"].tickers,
+#             "fundementals_report": "",
+#             "news_report": "",
+#             "messages": [],
+#         }
+#     )
 
-    graph = TradingGraph(ctx["agent_choice"])
-    trading_graph = graph.build_graph()
+#     graph = TradingGraph(ctx["agent_choice"])
+#     trading_graph = graph.build_graph()
 
-    result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
-    logger.info(f"Final result: {result}")
+#     result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
+#     logger.info(f"Final result: {result}")
 
 
 def convert_input_to_cron_expression(rate: str, time_string: Optional[str]) -> str:

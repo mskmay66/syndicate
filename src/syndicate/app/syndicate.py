@@ -11,7 +11,7 @@ from textual.logging import TextualHandler
 from .components.setup import Setup
 from .components.splash import Splash
 
-from ..models import LLMConfig, Watchlist, GuardrailsConfig
+# from ..models import LLMConfig, Watchlist, GuardrailsConfig
 from ..file_manager import add_config_file
 from .callbacks import add_secret, convert_input_to_cron_expression, register_cron
 
@@ -27,7 +27,7 @@ class SetupScreen(Screen):  #
     """A Textual screen to display the setup screen."""
 
     BINDINGS = [("f", "finish_setup", "Finish setup and enter app")]
-    guardrails = GuardrailsConfig()
+    # guardrails = GuardrailsConfig()
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -46,9 +46,7 @@ class SetupScreen(Screen):  #
         """A callback function to handle watchlist updates."""
         logging.info(f"Watchlist updated: {watchlist}")
         # Here you would typically save the watchlist to a config file or state
-        self.watchlist = Watchlist(
-            tickers=[ticker.strip() for ticker in watchlist.split(",")]
-        )
+        pass
 
     def _provider_callback(self, provider: str) -> None:
         """A callback function to handle provider updates."""
@@ -91,11 +89,11 @@ class SetupScreen(Screen):  #
         add_config_file(self.watchlist.model_dump(), "watchlist.json")
 
         # create the llm config
-        llm_config = LLMConfig(
-            provider=self.provider,
-            model=self.model,
-        )
-        add_config_file(llm_config.model_dump(), "agent.json")
+        # llm_config = LLMConfig(
+        #     provider=self.provider,
+        #     model=self.model,
+        # )
+        # add_config_file(llm_config.model_dump(), "agent.json")
 
         # write a services config file with the API keys and guardrails
         services = {

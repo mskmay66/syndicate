@@ -4,7 +4,9 @@ from langgraph.graph import END, StateGraph, START
 from langgraph.prebuilt import ToolNode
 
 from .models.trade_state import TradeState
-from .models.llm import LLMConfig
+from .models import User
+
+# from .models.llm import LLMConfig
 from .llm_clients import create_llm_client
 from .agents import (
     build_fundementals_analyst,
@@ -30,12 +32,13 @@ from .tools import (
 class TradingGraph:
     def __init__(
         self,
-        llm_config: LLMConfig,
+        user_config: User,
         selected_agents=["news", "fundementals", "technical"],
     ):
-        self.llm_config = llm_config
+        # self.llm_config = llm_config
+        self.user_config = user_config
         self.selected_agents = selected_agents
-        self.llm = create_llm_client(**self.llm_config.model_dump()).get_llm()
+        self.llm = create_llm_client(**self.user_config.get_llm_data()).get_llm()
 
     @property
     def tool_map(self) -> Dict[str, List[Callable]]:

@@ -10,8 +10,8 @@ from langchain_core.tools import tool
 
 from ..secrets import get_secret_from_keyring
 
-API_KEY = get_secret_from_keyring("ALPACA_DEFAULT")
-API_SECRET_KEY = get_secret_from_keyring("ALPACA_SECRET")
+API_KEY = get_secret_from_keyring("broker_api_key")
+API_SECRET_KEY = get_secret_from_keyring("broker_secret_key")
 
 news_client = None
 if API_KEY and API_SECRET_KEY:

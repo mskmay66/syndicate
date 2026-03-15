@@ -1,6 +1,6 @@
-import os
 import httpx
 from langchain_core.tools import tool
+from ..secrets import get_secret_from_keyring
 
 
 class AlphaVantageInterface:
@@ -12,7 +12,7 @@ class AlphaVantageInterface:
 
     def get_api_key(self) -> str:
         """Get the Alpha Vantage API key from environment variable."""
-        api_key = os.environ.get("ALPHA_VANTAGE_API_KEY")
+        api_key = get_secret_from_keyring("alpha_vantage_api_key")
         if not api_key:
             raise ValueError(
                 "Alpha Vantage API key not found in environment variable 'ALPHA_VANTAGE_API_KEY'."
@@ -65,7 +65,7 @@ def get_indicator(symbol: str, indicator: str, interval: str = "daily") -> str:
         "vwma": ("VWMA", "close"),
     }
 
-    if os.environ.get("ALPHA_VANTAGE_API_KEY") is None:
+    if get_secret_from_keyring("alpha_vantage_api_key") is None:
         return "Alpha Vantage API key not found. Please set the 'ALPHA_VANTAGE_API_KEY' environment variable to use this tool."
 
     interface = AlphaVantageInterface()

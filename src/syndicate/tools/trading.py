@@ -11,8 +11,8 @@ from alpaca.trading.enums import OrderSide, TimeInForce
 from ..secrets import get_secret_from_keyring
 from ..file_manager import read_config_file
 
-API_KEY = get_secret_from_keyring("ALPACA_DEFAULT")
-API_SECRET_KEY = get_secret_from_keyring("ALPACA_SECRET")
+API_KEY = get_secret_from_keyring("broker_api_key")
+API_SECRET_KEY = get_secret_from_keyring("broker_secret_key")
 
 guardrails_config = {}
 if os.path.exists("guardrails.json"):
