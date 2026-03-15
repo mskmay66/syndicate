@@ -39,25 +39,6 @@ def get_secret(
         return None
 
 
-# def run(ctx: Dict[str, Any]) -> None:
-#     """Starts the Syndicate agent."""
-#     inital_state = TradeState.model_validate(
-#         {
-#             "current_date": datetime.now().strftime("%Y-%m-%d"),
-#             "tickers": ctx["watchlist"].tickers,
-#             "fundementals_report": "",
-#             "news_report": "",
-#             "messages": [],
-#         }
-#     )
-
-#     graph = TradingGraph(ctx["agent_choice"])
-#     trading_graph = graph.build_graph()
-
-#     result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
-#     logger.info(f"Final result: {result}")
-
-
 def convert_input_to_cron_expression(rate: str, time_string: Optional[str]) -> str:
     """Converts a user-friendly schedule input into a cron expression.
 

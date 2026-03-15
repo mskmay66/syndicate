@@ -1,5 +1,5 @@
 from pydantic import BaseModel, SecretStr
-from typing import List
+from typing import List, Dict
 
 
 class User(BaseModel):
@@ -11,12 +11,11 @@ class User(BaseModel):
     model_api_key: SecretStr
     alpha_vantage_api_key: SecretStr
     cron: str
-    guardrails: dict[str, float]
+    guardrails: Dict[str, float]
 
-    def to_json(self) -> str:
+    def to_json(self) -> Dict:
         """Convert the User object to a JSON string."""
-        values = {k: v for k, v in self.model_dump().items() if "key" not in k}
-        return str(values)
+        return {k: v for k, v in self.model_dump().items() if "key" not in k}
 
     def get_llm_data(self) -> dict:
         """Get the LLM configuration data."""

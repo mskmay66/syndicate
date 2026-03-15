@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Dict
 from textual import on
 from textual.app import App, ComposeResult
 from textual.screen import Screen
@@ -11,9 +11,10 @@ from textual.logging import TextualHandler
 from .components.setup import Setup
 from .components.splash import Splash
 
-# from ..models import LLMConfig, Watchlist, GuardrailsConfig
+from ..models import User
 from ..file_manager import add_config_file
-from .callbacks import add_secret, convert_input_to_cron_expression, register_cron
+from .callbacks import convert_input_to_cron_expression, register_cron
+from ..secrets import set_all_secrets
 
 
 logging.basicConfig(
@@ -27,15 +28,20 @@ class SetupScreen(Screen):  #
     """A Textual screen to display the setup screen."""
 
     BINDINGS = [("f", "finish_setup", "Finish setup and enter app")]
-    # guardrails = GuardrailsConfig()
+    guardrails: Dict[str, float] = {}
 
     def compose(self) -> ComposeResult:
+        callbacks = {
+            k.replace("callback", "updated"): v
+            for k, v in self.__dict__.items()
+            if "callback" in k
+        }
         yield Header(show_clock=True)
         yield Static(
             "Welcome to Syndicate! Let's start by configuring your trading agent.",
             id="setup_message",
         )
-        yield Setup()
+        yield Setup(callbacks=callbacks)
         yield Footer()
 
     def on_mount(self) -> None:
@@ -46,7 +52,7 @@ class SetupScreen(Screen):  #
         """A callback function to handle watchlist updates."""
         logging.info(f"Watchlist updated: {watchlist}")
         # Here you would typically save the watchlist to a config file or state
-        pass
+        self.watchlist = watchlist
 
     def _provider_callback(self, provider: str) -> None:
         """A callback function to handle provider updates."""
@@ -64,14 +70,14 @@ class SetupScreen(Screen):  #
     def _broker_api_key_callback(self, api_key: str) -> None:
         self.broker_api_key = api_key
 
-    def _broker_secret_key_callback(self, secret_key: str) -> None:
+    def _broker_secret_callback(self, secret_key: str) -> None:
         self.broker_secret_key = secret_key
 
     def _technical_api_key_callback(self, api_key: str) -> None:
         self.technical_api_key = api_key
 
     def _guardrails_callback(self, guardrail_name, pct) -> None:
-        self.guardrails.__setattr__(guardrail_name, pct)
+        self.guardrails[guardrail_name] = pct
 
     def _cron_selection_callback(self, sch: str) -> None:
         logging.info(f"Cron schedule updated: {sch}")
@@ -85,37 +91,30 @@ class SetupScreen(Screen):  #
         """ "Handle the finish setup action."""
         logging.info("Finishing setup and entering app")
 
-        # write the watchlist
-        add_config_file(self.watchlist.model_dump(), "watchlist.json")
-
-        # create the llm config
-        # llm_config = LLMConfig(
-        #     provider=self.provider,
-        #     model=self.model,
-        # )
-        # add_config_file(llm_config.model_dump(), "agent.json")
-
-        # write a services config file with the API keys and guardrails
-        services = {
-            "ALPHA_VANTAGE_API_KEY": self.technical_api_key,
-            "ALPACA_DEFAULT": self.broker_api_key,
-            "ALPACA_SECRET_KEY": self.broker_secret_key,
-            self.provider: self.model_api_key,
-        }
-        for service, key in services.items():
-            add_secret(service, key)
-
-        # write a guardrails config file
-        add_config_file(self.guardrails.model_dump(), "guardrails.json")
-
-        # register crons
+        # generate the cron
         cron = convert_input_to_cron_expression(
             self.cron_schedule, self.cron_expression
         )
         register_cron(cron)
 
-        # Here you would typically save the configuration to a file or state
-        self.app.push_screen("splash")
+        # create a UserConfig
+        user_config = User(
+            model_provider=self.provider,
+            model_name=self.model,
+            watchlist=self.watchlist.strip().split(","),
+            broker_api_key=self.broker_api_key,
+            broker_secret_key=self.broker_secret_key,
+            model_api_key=self.model_api_key,
+            alpha_vantage_api_key=self.technical_api_key,
+            cron=cron,
+            guardrails=self.guardrails,
+        )
+
+        # Save the user config to a file
+        add_config_file(user_config.to_json(), "user_config.json")
+
+        # add the secrets to the keyring
+        set_all_secrets(user_config.get_secrets())
 
 
 class SplashScreen(Screen):
