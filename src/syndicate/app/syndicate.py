@@ -6,6 +6,7 @@ from textual.widgets import Header, Static, Button, Footer
 from textual.containers import Container
 from art import text2art
 import logging
+from logging.handlers import RotatingFileHandler
 from textual.logging import TextualHandler
 
 from .components.setup import Setup
@@ -20,7 +21,7 @@ from ..secrets import set_all_secrets
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     level="NOTSET",
-    handlers=[TextualHandler()],
+    handlers=[TextualHandler(), RotatingFileHandler(filename=".logs/app.log")],
 )
 
 
@@ -32,10 +33,11 @@ class SetupScreen(Screen):  #
 
     def compose(self) -> ComposeResult:
         callbacks = {
-            k.replace("callback", "updated"): v
-            for k, v in self.__dict__.items()
-            if "callback" in k
+            k.replace("callback", "updated")[1:]: getattr(self, k)
+            for k in dir(self)
+            if "callback" in k and k.startswith("_")
         }
+        logging.info(f"Callbacks: {callbacks}")
         yield Header(show_clock=True)
         yield Static(
             "Welcome to Syndicate! Let's start by configuring your trading agent.",
@@ -77,6 +79,7 @@ class SetupScreen(Screen):  #
         self.technical_api_key = api_key
 
     def _guardrails_callback(self, guardrail_name, pct) -> None:
+        logging.info(f"Guardrail {guardrail_name} changed to: {pct}")
         self.guardrails[guardrail_name] = pct
 
     def _cron_selection_callback(self, sch: str) -> None:
@@ -87,8 +90,9 @@ class SetupScreen(Screen):  #
         logging.info(f"Cron expression updated: {expr}")
         self.cron_expression = expr
 
-    def on_finish_setup(self) -> None:
+    def action_finish_setup(self) -> None:
         """ "Handle the finish setup action."""
+        # print("Finishing setup and entering app")
         logging.info("Finishing setup and entering app")
 
         # generate the cron
@@ -96,6 +100,7 @@ class SetupScreen(Screen):  #
             self.cron_schedule, self.cron_expression
         )
         register_cron(cron)
+        logging.info(f"Generated cron: {cron}")
 
         # create a UserConfig
         user_config = User(
@@ -115,6 +120,7 @@ class SetupScreen(Screen):  #
 
         # add the secrets to the keyring
         set_all_secrets(user_config.get_secrets())
+        self.app.pop_screen()
 
 
 class SplashScreen(Screen):

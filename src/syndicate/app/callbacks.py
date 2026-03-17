@@ -51,6 +51,7 @@ def convert_input_to_cron_expression(rate: str, time_string: Optional[str]) -> s
     Raises:
         ValueError: If the input format is not recognized.
     """
+    logger.info("converting to cron")
 
     def map_day_of_week(day: str) -> int:
         day = day.lower()[-3:]  # Get the first three letters

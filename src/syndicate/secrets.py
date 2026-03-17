@@ -60,7 +60,7 @@ def set_all_secrets(secrets: Dict) -> None:
     Args:
         secrets (dict): A dictionary containing all secrets needed for the application, with service names as keys and secret values as values.
     """
-    assert list(secrets.keys()) == REQUIRED_SECRETS, (
+    assert set(secrets.keys()) == set(REQUIRED_SECRETS), (
         f"Secrets keys must match required secrets: {REQUIRED_SECRETS}"
     )
     for service_name, secret in secrets.items():

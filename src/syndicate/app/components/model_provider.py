@@ -36,4 +36,6 @@ class ModelChoiceFromProvider(Vertical):
             id="model_choice_title",
         )
         models = VALID_MODELS.get(self.provider, [])
-        yield Select((model, model.replace(".", "_")) for model in models)
+        yield Select(
+            ((model, model.replace(".", "_")) for model in models), id="model_choice"
+        )

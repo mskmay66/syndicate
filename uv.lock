@@ -326,12 +326,6 @@ wheels = [
 ]
 
 [[package]]
-name = "crontab"
-version = "1.0.5"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d6/36/a255b6f5a2e22df03fd2b2f3088974b44b8c9e9407e26b44742cb7cfbf5b/crontab-1.0.5.tar.gz", hash = "sha256:f80e01b4f07219763a9869f926dd17147278e7965a928089bca6d3dc80ae46d5", size = 21963, upload_time = "2025-07-09T17:09:38.264Z" }
-
-[[package]]
 name = "cryptography"
 version = "46.0.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1974,6 +1968,15 @@ wheels = [
 ]
 
 [[package]]
+name = "python-crontab"
+version = "3.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/99/7f/c54fb7e70b59844526aa4ae321e927a167678660ab51dda979955eafb89a/python_crontab-3.3.0.tar.gz", hash = "sha256:007c8aee68dddf3e04ec4dce0fac124b93bd68be7470fc95d2a9617a15de291b", size = 57626, upload_time = "2025-07-13T20:05:35.535Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/47/42/bb4afa5b088f64092036221843fc989b7db9d9d302494c1f8b024ee78a46/python_crontab-3.3.0-py3-none-any.whl", hash = "sha256:739a778b1a771379b75654e53fd4df58e5c63a9279a63b5dfe44c0fcc3ee7884", size = 27533, upload_time = "2025-07-13T20:05:34.266Z" },
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -2339,7 +2342,6 @@ source = { editable = "." }
 dependencies = [
     { name = "alpaca-py" },
     { name = "art" },
-    { name = "crontab" },
     { name = "httpx" },
     { name = "keyring" },
     { name = "langchain" },
@@ -2353,6 +2355,7 @@ dependencies = [
     { name = "pandas" },
     { name = "platformdirs" },
     { name = "pydantic" },
+    { name = "python-crontab" },
     { name = "pytz" },
     { name = "textual" },
     { name = "torch" },
@@ -2371,7 +2374,6 @@ dev = [
 requires-dist = [
     { name = "alpaca-py", specifier = ">=0.43.2" },
     { name = "art", specifier = ">=6.5" },
-    { name = "crontab", specifier = ">=1.0.5" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "keyring", specifier = ">=25.7.0" },
     { name = "langchain", specifier = ">=1.2.10" },
@@ -2385,6 +2387,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=3.0.0" },
     { name = "platformdirs", specifier = ">=4.9.2" },
     { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "python-crontab", specifier = ">=3.3.0" },
     { name = "pytz", specifier = ">=2025.2" },
     { name = "textual", specifier = ">=8.0.2" },
     { name = "torch", specifier = ">=2.10.0" },
