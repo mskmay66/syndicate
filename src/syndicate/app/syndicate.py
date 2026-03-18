@@ -80,7 +80,11 @@ class SetupScreen(Screen):  #
 
     def _guardrails_callback(self, guardrail_name, pct) -> None:
         logging.info(f"Guardrail {guardrail_name} changed to: {pct}")
-        self.guardrails[guardrail_name] = pct
+        try:
+            value = abs(float(pct))
+        except ValueError:
+            return
+        self.guardrails[guardrail_name] = value
 
     def _cron_selection_callback(self, sch: str) -> None:
         logging.info(f"Cron schedule updated: {sch}")
@@ -92,7 +96,6 @@ class SetupScreen(Screen):  #
 
     def action_finish_setup(self) -> None:
         """ "Handle the finish setup action."""
-        # print("Finishing setup and entering app")
         logging.info("Finishing setup and entering app")
 
         # generate the cron
