@@ -1,17 +1,14 @@
 from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from ..tools import get_news, get_global_news
 
 
 logger = setup_logging(__name__, "news_analyst")
 
 
-def build_news_analyst(llm):
+def build_news_analyst(llm, tools):
     def news_analyst_node(state):
         current_date = state.current_date
         tickers = state.tickers
-
-        tools = [get_news, get_global_news]
 
         system_prompt = "You are a financial news analyst. Your task is to analyze the latest news articles related to the stocks in the portfolio and provide insights that can help inform trading decisions."
 

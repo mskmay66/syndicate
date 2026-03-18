@@ -1,17 +1,14 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from ..log_config import setup_logging
-from ..tools import get_indicator, get_latest_quote
 
 logger = setup_logging(__name__, "technical_analyst")
 
 
-def build_technical_analyst(llm):
+def build_technical_analyst(llm, tools):
     def technical_analyst_node(state):
         current_date = state.current_date
         tickers = state.tickers
-
-        tools = [get_indicator, get_latest_quote]
 
         system_prompt = "You are a financial technical analyst. Your task is to analyze the technical indicators related to the stocks in the portfolio and provide insights that can help inform trading decisions."
 

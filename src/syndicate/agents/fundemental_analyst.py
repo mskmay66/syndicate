@@ -1,27 +1,14 @@
 from ..log_config import setup_logging
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from ..tools import (
-    get_fundementals,
-    get_balance_sheet,
-    get_income_statement,
-    get_cashflow,
-)
 
 logger = setup_logging(__name__, "fundementals_analyst")
 
 
-def build_fundementals_analyst(llm):
+def build_fundementals_analyst(llm, tools):
     def fundementals_analyst_node(state):
         current_date = state.current_date
         tickers = state.tickers
-
-        tools = [
-            get_fundementals,
-            get_balance_sheet,
-            get_income_statement,
-            get_cashflow,
-        ]
 
         system_prompt = "You are a financial fundementals analyst. Your task is to analyze the fundemental data related to the stocks in the portfolio and provide insights that can help inform trading decisions."
 

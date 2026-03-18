@@ -1,25 +1,17 @@
 from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from ..tools import (
-    get_account_summary,
-    buy_stock,
-    sell_stock,
-    get_latest_quote,
-    max_loss,
-    take_profit,
-)
 
 logger = setup_logging(__name__, "trader")
 
 
-def build_trader(llm):
+def build_trader(llm, tools):
     def trader_node(state):
         current_date = state.current_date
         tickers = state.tickers
         fundementals_report = state.fundementals_report
         news_report = state.news_report
 
-        tools = [get_account_summary, buy_stock, sell_stock, get_latest_quote]
+        # tools = [get_account_summary, buy_stock, sell_stock, get_latest_quote]
 
         curr_situation = f"{fundementals_report}\n\n{news_report}"
 
@@ -61,8 +53,6 @@ def build_trader(llm):
         if len(result.tool_calls) == 0:
             report = result.content
             logger.info(f"Trader did not use any tools. Report: {report}")
-            max_loss()
-            take_profit()
         else:
             logger.info(f"Trader used tools. Tool calls: {result.tool_calls}")
 

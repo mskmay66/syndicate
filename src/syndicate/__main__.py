@@ -3,8 +3,6 @@ from datetime import datetime
 from .models import TradeState
 from .models import User
 
-# from .models.llm import LLMConfig
-# from .models.watchlist import Watchlist
 from .trading_graph import TradingGraph
 from .log_config import setup_logging
 from .file_manager import read_config_file
@@ -31,11 +29,12 @@ def _load_user_config() -> User:
 def main() -> None:
     """The main entry point for the Syndicate application."""
     user = _load_user_config()
+    logger.info(f"User config: {user}")
 
     inital_state = TradeState.model_validate(
         {
             "current_date": datetime.now().strftime("%Y-%m-%d"),
-            "tickers": user["watchlist"],
+            "tickers": user.watchlist,
             "fundementals_report": "",
             "news_report": "",
             "messages": [],

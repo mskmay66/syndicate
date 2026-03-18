@@ -6,7 +6,6 @@ from langgraph.prebuilt import ToolNode
 from .models.trade_state import TradeState
 from .models import User
 
-# from .models.llm import LLMConfig
 from .llm_clients import create_llm_client
 from .agents import (
     build_fundementals_analyst,
@@ -15,17 +14,10 @@ from .agents import (
     build_trader,
 )
 from .tools import (
-    get_fundementals,
-    get_balance_sheet,
-    get_income_statement,
-    get_cashflow,
-    get_news,
-    get_global_news,
-    get_latest_quote,
-    buy_stock,
-    sell_stock,
-    get_account_summary,
-    get_indicator,
+    TradeTools,
+    FundementalTools,
+    NewsTools,
+    TechnicalTools,
 )
 
 
@@ -35,10 +27,9 @@ class TradingGraph:
         user_config: User,
         selected_agents=["news", "fundementals", "technical"],
     ):
-        # self.llm_config = llm_config
-        self.user_config = user_config
+        self.user = user_config
         self.selected_agents = selected_agents
-        self.llm = create_llm_client(**self.user_config.get_llm_data()).get_llm()
+        self.llm = create_llm_client(**self.user.get_llm_data()).get_llm()
 
     @property
     def tool_map(self) -> Dict[str, List[Callable]]:
@@ -48,23 +39,10 @@ class TradingGraph:
             Dict[str, List[Callable]]: A dictionary mapping agent names to their corresponding tools.
         """
         return {
-            "fundementals_tools": [
-                get_fundementals,
-                get_balance_sheet,
-                get_income_statement,
-                get_cashflow,
-            ],
-            "news_tools": [
-                get_news,
-                get_global_news,
-            ],
-            "technical_tools": [get_indicator, get_latest_quote],
-            "trader_tools": [
-                get_latest_quote,
-                buy_stock,
-                sell_stock,
-                get_account_summary,
-            ],
+            "fundementals_tools": FundementalTools(self.user).build_tools(),
+            "news_tools": NewsTools(self.user).build_tools(),
+            "technical_tools": TechnicalTools(self.user).build_tools(),
+            "trader_tools": TradeTools(self.user).build_tools(),
         }
 
     def _create_tool_nodes(self) -> Dict[str, ToolNode]:
@@ -90,12 +68,15 @@ class TradingGraph:
         Returns:
             Dict[str, ToolNode]: A dictionary mapping agent names to their corresponding agent nodes.
         """
-        llm = self.llm
         return {
-            "fundementals": build_fundementals_analyst(llm),
-            "news": build_news_analyst(llm),
-            "technical": build_technical_analyst(llm),
-            "trader": build_trader(llm),
+            "fundementals": build_fundementals_analyst(
+                self.llm, self.tool_map.get("fundementals_tools", [])
+            ),
+            "news": build_news_analyst(self.llm, self.tool_map.get("news_tools", [])),
+            "technical": build_technical_analyst(
+                self.llm, self.tool_map.get("technical_tools", [])
+            ),
+            "trader": build_trader(self.llm, self.tool_map.get("trader_tools", [])),
         }
 
     def build_graph(self) -> StateGraph:
@@ -154,4 +135,4 @@ class TradingGraph:
             TradeState: The final state after running the trading graph.
         """
         graph = self.build_graph()
-        return graph.invoke(initial_state, config={"recursion_limit": 50})
+        return graph.invoke(initial_state, config={"recursion_limit": 150})
