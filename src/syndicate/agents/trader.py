@@ -1,6 +1,5 @@
 from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from ..tools import TradeTools
 
 logger = setup_logging(__name__, "trader")
 
@@ -52,7 +51,8 @@ def build_trader(llm, tools):
         if len(result.tool_calls) == 0:
             report = result.content
             logger.info(f"Trader did not use any tools. Report: {report}")
-            TradeTools(state.user).take_profits_stop_loss()
+            # take_profit_stop_loss = [tool for tool in tools if tool.__name__ == "take_profits_stop_loss"][0]
+            # take_profit_stop_loss()
         else:
             logger.info(f"Trader used tools. Tool calls: {result.tool_calls}")
 

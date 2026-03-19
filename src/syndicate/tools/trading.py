@@ -13,6 +13,12 @@ from alpaca.data.requests import StockLatestQuoteRequest
 from ..models import User
 
 
+class MaxConcetrationError(Exception):
+    """Raised when agent tries to buy more stock we already have enough of."""
+
+    pass
+
+
 class TradeTools:
     def __init__(self, user: User) -> None:
         self.user = user
@@ -65,6 +71,9 @@ class TradeTools:
             )
             if (port_value * max_conc) > (new_position_value / port_value):
                 return func(*args, **kwargs)
+            raise MaxConcetrationError(
+                f"Portfolio is too concentrated, we have enough {ticker}"
+            )
 
         return wrapper
 
