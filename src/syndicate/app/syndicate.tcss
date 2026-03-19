@@ -20,7 +20,6 @@ Splash {
 }
 
 Input {
-    background: transparent;
     border: round transparent
 }
 
@@ -28,30 +27,16 @@ Input:focus {
     border: round $accent;
 }
 
-RadioSet {
-    background: transparent;
-    border: round transparent;
-    grid-size: 3;
-    grid-columns: 1fr;
-    grid-rows: auto;
-    grid-gutter: 1 2;
-    margin-bottom: 2
+Select:focus > SelectCurrent {
+    border: tall $accent;
 }
 
-RadioSet:focus {
-    border: round $accent;
+Select.-expanded > SelectCurrent {
+    border: tall $accent;
 }
 
-RadioButton {
-    background: transparent;
-}
-
-RadioButton > .radio--button {
-    background: transparent;
-}
-
-RadioButton.-selected > .radio--button {
-    background: $accent
+.textual-select-option-list {
+    border: heavy $accent;
 }
 
 #splash {
@@ -71,40 +56,18 @@ RadioButton.-selected > .radio--button {
     align-horizontal: center;
 }
 
-Button {
-    margin: 0 2;
+#cron_expression_title {
+    margin-bottom: 1;
+    margin-top: 1;
 }
 
-/* Button {
-    background: yellow;
-    margin: 0 10;
-    align: center middle;
-}
-
-HorizontalGroup {
-    width: auto;
-    align-horizontal: center;
-}
-
-#login {
-    width: 100%;
-    height: 100%;
-    align: center middle;
-}
-
-#login > Vertical {
-    width: auto;
-    height: auto;
-    align-horizontal: center;
-}
-
-#setup_scroll {
-    height: 1fr;
-    width: 100%;
-}
-
-#splash_title {
-    text-align: center;
-    margin-bottom: 2;
-    color: $text;
-} */
+VerticalScroll {
+    overflow-y: auto;
+}.box {
+        /* Prevents shrinking smaller than 10 lines */
+        height: 10;
+        margin: 1;
+        background: $background;
+        color: $text;
+        content-align: center middle;
+    }

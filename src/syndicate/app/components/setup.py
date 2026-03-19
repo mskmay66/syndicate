@@ -28,7 +28,7 @@ class Setup(Vertical):
         self.callbacks = callbacks or {}
 
     def compose(self) -> ComposeResult:
-        with VerticalScroll(id="setup_scroll"):
+        with VerticalScroll():
             yield Static(
                 "Enter a list of tickers you want to trade",
                 id="setup_title",
@@ -36,29 +36,40 @@ class Setup(Vertical):
             yield Input(
                 placeholder="Enter your watchlist (comma-separated tickers)",
                 id="watchlist_input",
+                classes="box",
             )
-            yield ProviderChoice(id="provider_choice")
-            yield ModelChoiceFromProvider(id="model_choice_from_provider")
-            yield ApiKeyInput(
-                id="model_api", input_id="model_api_input", provider="llm"
+            yield ProviderChoice(id="provider_choice", classes="box")
+            yield ModelChoiceFromProvider(
+                id="model_choice_from_provider", classes="box"
             )
             yield ApiKeyInput(
-                id="broker_api", input_id="broker_api_input", provider="alpaca"
+                id="model_api",
+                input_id="model_api_input",
+                provider="llm",
+                classes="box",
+            )
+            yield ApiKeyInput(
+                id="broker_api",
+                input_id="broker_api_input",
+                provider="alpaca",
+                classes="box",
             )
             yield ApiKeyInput(
                 id="broker_secret_api",
                 input_id="broker_secret_input",
                 provider="alpaca secret",
+                classes="box",
             )
             yield ApiKeyInput(
                 id="technical_api",
                 input_id="technical_api_input",
                 provider="alpha vantage",
+                classes="box",
             )
-            yield CronInput(id="cron_input")
-            yield GuardrailsInput(id="guardrails_input")
+            yield CronInput(id="cron_input", classes="box")
+            yield GuardrailsInput(id="guardrails_input", classes="box")
 
-            with Vertical():
+            with Vertical(classes="box"):
                 yield Static("Do you want to paper trade?")
                 yield Switch(id="paper_trade")
 
