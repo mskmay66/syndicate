@@ -1,6 +1,8 @@
 import json
 from typing import Optional, List
 from langchain_core.tools import tool
+import functools
+import inspect
 
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
@@ -24,6 +26,29 @@ class TradeTools:
             user.broker_secret_key.get_secret_value(),
         )
 
+    @staticmethod
+    def max_concentration(func):
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            buying_power = json.load(self._get_account_summary()).get("buying_power", 0)
+            sig = inspect.signature(func)
+            try:
+                bound_args = sig.bind(*args, **kwargs)
+            except TypeError as te:
+                raise TypeError(f"Error when calling {func.__name__}: {te}") from te
+
+            if "quantity" not in bound_args:
+                raise ValueError("quantity not found in arguments to function")
+
+            quantity = bound_args.arguments.get("quantity")
+            limit_price = bound_args.arguments.get("limit_price")
+            max_conc = self.user.guardrails.max_concentration
+            if (buying_power * max_conc) > (quantity * limit_price):
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    @max_concentration
     def _trade(
         self, ticker: str, quantity: int, limit_price: Optional[float], side: OrderSide
     ) -> None:

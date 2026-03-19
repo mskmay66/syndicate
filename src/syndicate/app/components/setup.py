@@ -115,8 +115,26 @@ class Setup(Vertical):
         cron_expression = event.value
         self.callbacks.get("cron_expression_updated", lambda x: None)(cron_expression)
 
-    @on(Input.Changed, "#guardrails_input")
-    def guardrails_selection_changed(self, event: Input.Changed) -> None:
-        """Handle the guardrails selection change."""
+    @on(Input.Changed, "#max_position_concentration_input")
+    def max_position_changed(self, event: Input.Changed) -> None:
         guardrail_choice = event.value
-        self.callbacks.get("guardrails_updated", lambda x: None)(guardrail_choice)
+        logging.info(f"Max Position changed: {guardrail_choice}")
+        self.callbacks.get("guardrails_updated", lambda x: None)(
+            "max_concentration", guardrail_choice
+        )
+
+    @on(Input.Changed, "#stop_losses_input")
+    def stop_losses_changed(self, event: Input.Changed) -> None:
+        guardrail_choice = event.value
+        logging.info(f"stop_losseschanged: {guardrail_choice}")
+        self.callbacks.get("guardrails_updated", lambda x: None)(
+            "stop_loss", guardrail_choice
+        )
+
+    @on(Input.Changed, "#take_profits_input")
+    def take_profits(self, event: Input.Changed) -> None:
+        guardrail_choice = event.value
+        logging.info(f"take_profits changed: {guardrail_choice}")
+        self.callbacks.get("guardrails_updated", lambda x: None)(
+            "take_profits", guardrail_choice
+        )

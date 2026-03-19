@@ -12,7 +12,7 @@ from textual.logging import TextualHandler
 from .components.setup import Setup
 from .components.splash import Splash
 
-from ..models import User
+from ..models import User, GuardRails
 from ..file_manager import add_config_file
 from .callbacks import convert_input_to_cron_expression, register_cron
 from ..secrets import set_all_secrets
@@ -78,7 +78,7 @@ class SetupScreen(Screen):  #
     def _technical_api_key_callback(self, api_key: str) -> None:
         self.technical_api_key = api_key
 
-    def _guardrails_callback(self, guardrail_name, pct) -> None:
+    def _guardrails_callback(self, guardrail_name: str, pct: float) -> None:
         logging.info(f"Guardrail {guardrail_name} changed to: {pct}")
         try:
             value = abs(float(pct))
@@ -105,6 +105,9 @@ class SetupScreen(Screen):  #
         register_cron(cron)
         logging.info(f"Generated cron: {cron}")
 
+        # create guardrails
+        guardrails = GuardRails(**self.guardrails)
+
         # create a UserConfig
         user_config = User(
             model_provider=self.provider,
@@ -115,7 +118,7 @@ class SetupScreen(Screen):  #
             model_api_key=self.model_api_key,
             alpha_vantage_api_key=self.technical_api_key,
             cron=cron,
-            guardrails=self.guardrails,
+            guardrails=guardrails,
         )
 
         # Save the user config to a file

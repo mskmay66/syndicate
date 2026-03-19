@@ -2,6 +2,12 @@ from pydantic import BaseModel, SecretStr
 from typing import List, Dict
 
 
+class GuardRails(BaseModel):
+    max_concentration: float
+    stop_loss: float
+    take_profit: float
+
+
 class User(BaseModel):
     model_provider: str
     model_name: str
@@ -11,7 +17,8 @@ class User(BaseModel):
     model_api_key: SecretStr
     alpha_vantage_api_key: SecretStr
     cron: str
-    guardrails: Dict[str, float]
+    guardrails: GuardRails
+    paper: bool = False
 
     def to_json(self) -> Dict:
         """Convert the User object to a JSON string."""
