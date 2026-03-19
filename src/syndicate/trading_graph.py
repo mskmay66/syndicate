@@ -76,7 +76,11 @@ class TradingGraph:
             "technical": build_technical_analyst(
                 self.llm, self.tool_map.get("technical_tools", [])
             ),
-            "trader": build_trader(self.llm, self.tool_map.get("trader_tools", [])),
+            "trader": build_trader(
+                self.llm,
+                self.tool_map.get("trader_tools", []),
+                TradeTools(self.user).take_profits_stop_loss,
+            ),
         }
 
     def build_graph(self) -> StateGraph:

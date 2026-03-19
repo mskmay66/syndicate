@@ -4,7 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 logger = setup_logging(__name__, "trader")
 
 
-def build_trader(llm, tools):
+def build_trader(llm, tools, take_profit_stop_loss):
     def trader_node(state):
         current_date = state.current_date
         tickers = state.tickers
@@ -52,7 +52,7 @@ def build_trader(llm, tools):
             report = result.content
             logger.info(f"Trader did not use any tools. Report: {report}")
             # take_profit_stop_loss = [tool for tool in tools if tool.__name__ == "take_profits_stop_loss"][0]
-            # take_profit_stop_loss()
+            take_profit_stop_loss()
         else:
             logger.info(f"Trader used tools. Tool calls: {result.tool_calls}")
 

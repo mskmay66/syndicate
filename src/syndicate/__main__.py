@@ -31,7 +31,7 @@ def main() -> None:
     user = _load_user_config()
     logger.info(f"User config: {user}")
 
-    inital_state = TradeState.model_validate(
+    initial_state = TradeState.model_validate(
         {
             "current_date": datetime.now().strftime("%Y-%m-%d"),
             "tickers": user.watchlist,
@@ -42,9 +42,8 @@ def main() -> None:
     )
 
     graph = TradingGraph(user)
-    trading_graph = graph.build_graph()
 
-    result = trading_graph.invoke(inital_state, config={"recursion_limit": 50})
+    result = graph.run(initial_state)
     logger.info(f"Final result: {result}")
 
 

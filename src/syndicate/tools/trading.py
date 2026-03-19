@@ -9,6 +9,7 @@ from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce, PositionSide
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
+from alpaca.common.exceptions import APIError
 
 from ..models import User
 
@@ -35,17 +36,22 @@ class TradeTools:
     def take_profits_stop_loss(self):
         if self.user.guardrails.take_profit or self.user.guardrails.stop_loss:
             for ticker in self.user.watchlist:
-                current_position = self.trade_client.get_open_position(ticker)
-                profit_loss = current_position.unrealized_plpc
-                side = (
-                    OrderSide.SELL
-                    if current_position.side == PositionSide.LONG
-                    else OrderSide.BUY
-                )
-                if profit_loss > self.user.guardrails.take_profit:
-                    self._trade(ticker, current_position.qty, side)
-                elif profit_loss < -self.user.guardrails.stop_loss:
-                    self._trade(ticker, current_position.qty, side)
+                try:
+                    current_position = self.trade_client.get_open_position(
+                        ticker.strip()
+                    )
+                    profit_loss = float(current_position.unrealized_plpc)
+                    side = (
+                        OrderSide.SELL
+                        if current_position.side == PositionSide.LONG
+                        else OrderSide.BUY
+                    )
+                    if profit_loss > self.user.guardrails.take_profit:
+                        self._trade(ticker, current_position.qty, side)
+                    elif profit_loss < -self.user.guardrails.stop_loss:
+                        self._trade(ticker, current_position.qty, side)
+                except APIError:
+                    continue
 
     @staticmethod
     def max_concentration(func):
