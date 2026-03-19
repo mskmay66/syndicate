@@ -129,9 +129,7 @@ class TradeTools:
 
         account_summary = self.trade_client.get_account()
         if not account_summary:
-            return (
-                f"Failed to get account summary. Reason: {account_summary['message']}"
-            )
+            return f"Failed to get account summary. Reason: {account_summary.get('message', '')}"
         status = {
             k: v for k, v in dict(account_summary).items() if k in keys_to_extract
         }
