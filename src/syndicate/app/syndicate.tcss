@@ -20,11 +20,11 @@ Splash {
 }
 
 Input {
-    border: round transparent
+    border: transparent;
 }
 
 Input:focus {
-    border: round $accent;
+    border: $accent;
 }
 
 Select:focus > SelectCurrent {
@@ -33,10 +33,6 @@ Select:focus > SelectCurrent {
 
 Select.-expanded > SelectCurrent {
     border: tall $accent;
-}
-
-.textual-select-option-list {
-    border: heavy $accent;
 }
 
 #splash {
@@ -49,11 +45,6 @@ Select.-expanded > SelectCurrent {
     text-align: center;
     margin-bottom: 2;
     margin-top: 10;
-}
-
-#button_group {
-    width: 100%;
-    align-horizontal: center;
 }
 
 #cron_expression_title {
@@ -70,4 +61,4 @@ VerticalScroll {
         background: $background;
         color: $text;
         content-align: center middle;
-    }
+}

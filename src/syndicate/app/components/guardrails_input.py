@@ -1,6 +1,6 @@
 from textual.app import ComposeResult
 from textual.containers import Vertical
-from textual.widgets import Input
+from textual.widgets import Input, Static
 
 
 class GuardrailsInput(Vertical):
@@ -9,6 +9,7 @@ class GuardrailsInput(Vertical):
     labels = ["Max Position Concentration %", "Stop Losses %", "Take Profits %"]
 
     def compose(self) -> ComposeResult:
+        yield Static("Set the guardrails you want for you agent.")
         for label in self.labels:
             yield Input(
                 placeholder=f"Enter {label}",

@@ -29,15 +29,16 @@ class Setup(Vertical):
 
     def compose(self) -> ComposeResult:
         with VerticalScroll():
-            yield Static(
-                "Enter a list of tickers you want to trade",
-                id="setup_title",
-            )
-            yield Input(
-                placeholder="Enter your watchlist (comma-separated tickers)",
-                id="watchlist_input",
-                classes="box",
-            )
+            with Vertical(classes="box"):
+                yield Static(
+                    "Enter a list of tickers you want to trade",
+                    id="setup_title",
+                )
+                yield Input(
+                    placeholder="Enter your watchlist (comma-separated tickers)",
+                    id="watchlist_input",
+                    max_length=9,
+                )
             yield ProviderChoice(id="provider_choice", classes="box")
             yield ModelChoiceFromProvider(
                 id="model_choice_from_provider", classes="box"
