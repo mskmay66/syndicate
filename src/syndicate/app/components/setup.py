@@ -1,7 +1,7 @@
 from typing import Callable
 from textual.app import ComposeResult
 from textual.containers import Vertical, VerticalScroll
-from textual.widgets import Static, Input, Select
+from textual.widgets import Static, Input, Select, Switch
 from textual import on
 import logging
 from logging.handlers import RotatingFileHandler
@@ -57,6 +57,10 @@ class Setup(Vertical):
             )
             yield CronInput(id="cron_input")
             yield GuardrailsInput(id="guardrails_input")
+
+            with Vertical():
+                yield Static("Do you want to paper trade?")
+                yield Switch(id="paper_trade")
 
     @on(Select.Changed, "#provider_select")
     def provider_changed(self, event: Select.Changed) -> None:
@@ -132,9 +136,14 @@ class Setup(Vertical):
         )
 
     @on(Input.Changed, "#take_profits_input")
-    def take_profits(self, event: Input.Changed) -> None:
+    def take_profits_changed(self, event: Input.Changed) -> None:
         guardrail_choice = event.value
         logging.info(f"take_profits changed: {guardrail_choice}")
         self.callbacks.get("guardrails_updated", lambda x: None)(
             "take_profits", guardrail_choice
         )
+
+    @on(Switch.Changed, "#paper_trade")
+    def paper_trade_changed(self, event: Switch.Changed) -> None:
+        logging.info(f"paper trading changed: {event.value}")
+        self.callbacks.get("paper_trade_updated", lambda x: None)(event.value)

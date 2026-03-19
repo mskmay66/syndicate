@@ -1,8 +1,7 @@
 from typing import Literal, Dict
-from textual import on
 from textual.app import App, ComposeResult
 from textual.screen import Screen
-from textual.widgets import Header, Static, Button, Footer
+from textual.widgets import Header, Static, Footer
 from textual.containers import Container
 from art import text2art
 import logging
@@ -53,7 +52,6 @@ class SetupScreen(Screen):  #
     def _watchlist_callback(self, watchlist: str) -> None:
         """A callback function to handle watchlist updates."""
         logging.info(f"Watchlist updated: {watchlist}")
-        # Here you would typically save the watchlist to a config file or state
         self.watchlist = watchlist
 
     def _provider_callback(self, provider: str) -> None:
@@ -94,6 +92,9 @@ class SetupScreen(Screen):  #
         logging.info(f"Cron expression updated: {expr}")
         self.cron_expression = expr
 
+    def _paper_trade_callback(self, event: bool) -> None:
+        self.paper = event
+
     def action_finish_setup(self) -> None:
         """ "Handle the finish setup action."""
         logging.info("Finishing setup and entering app")
@@ -119,6 +120,7 @@ class SetupScreen(Screen):  #
             alpha_vantage_api_key=self.technical_api_key,
             cron=cron,
             guardrails=guardrails,
+            paper=self.paper,
         )
 
         # Save the user config to a file
@@ -140,16 +142,6 @@ class SplashScreen(Screen):
     def on_mount(self) -> None:
         """Called when the screen is mounted. Start the typing effect."""
         self.title = text2art("Syndicate", font="slant")
-
-    @on(Button.Pressed, "#enter_button")
-    def handle_enter(self) -> None:
-        """Handle the login button press."""
-        pass
-
-    @on(Button.Pressed, "#setup_button")
-    def handle_setup(self) -> None:
-        """Handle the signup button press."""
-        self.app.push_screen("setup")
 
 
 class Syndicate(App):
