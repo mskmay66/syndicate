@@ -57,15 +57,12 @@ class TradeTools:
     def max_concentration(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            port_value = json.load(self._get_account_summary()).get("equity", 0)
+            port_value = json.loads(self._get_account_summary()).get("equity", 0)
             sig = inspect.signature(func)
             try:
-                bound_args = sig.bind(*args, **kwargs)
+                bound_args = sig.bind(self, *args, **kwargs)
             except TypeError as te:
                 raise TypeError(f"Error when calling {func.__name__}: {te}") from te
-
-            if "quantity" not in bound_args:
-                raise ValueError("quantity not found in arguments to function")
 
             ticker = bound_args.arguments.get("ticker")
             quantity = bound_args.arguments.get("quantity")
@@ -75,8 +72,8 @@ class TradeTools:
             new_position_value = current_position.market_value + (
                 limit_price * quantity
             )
-            if (port_value * max_conc) > (new_position_value / port_value):
-                return func(*args, **kwargs)
+            if new_position_value <= port_value * max_conc:
+                return func(self, *args, **kwargs)
             raise MaxConcetrationError(
                 f"Portfolio is too concentrated, we have enough {ticker}"
             )
