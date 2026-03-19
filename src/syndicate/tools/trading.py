@@ -6,7 +6,7 @@ import inspect
 
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
-from alpaca.trading.enums import OrderSide, TimeInForce
+from alpaca.trading.enums import OrderSide, TimeInForce, PositionSide
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
 
@@ -26,11 +26,26 @@ class TradeTools:
             user.broker_secret_key.get_secret_value(),
         )
 
+    def take_profits_stop_loss(self):
+        if self.user.guardrails.take_profit or self.user.guardrails.stop_loss:
+            for ticker in self.user.watchlist:
+                current_position = self.trade_client.get_open_position(ticker)
+                profit_loss = current_position.unrealized_plpc
+                side = (
+                    OrderSide.SELL
+                    if current_position.side == PositionSide.LONG
+                    else OrderSide.BUY
+                )
+                if profit_loss > self.user.guardrails.take_profit:
+                    self._trade(ticker, current_position.qty, side)
+                elif profit_loss < -self.user.guardrails.stop_loss:
+                    self._trade(ticker, current_position.qty, side)
+
     @staticmethod
     def max_concentration(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            buying_power = json.load(self._get_account_summary()).get("buying_power", 0)
+            port_value = json.load(self._get_account_summary()).get("equity", 0)
             sig = inspect.signature(func)
             try:
                 bound_args = sig.bind(*args, **kwargs)
@@ -40,10 +55,15 @@ class TradeTools:
             if "quantity" not in bound_args:
                 raise ValueError("quantity not found in arguments to function")
 
+            ticker = bound_args.arguments.get("ticker")
             quantity = bound_args.arguments.get("quantity")
             limit_price = bound_args.arguments.get("limit_price")
+            current_position = self.trade_client.get_open_position(ticker)
             max_conc = self.user.guardrails.max_concentration
-            if (buying_power * max_conc) > (quantity * limit_price):
+            new_position_value = current_position.market_value + (
+                limit_price * quantity
+            )
+            if (port_value * max_conc) > (new_position_value / port_value):
                 return func(*args, **kwargs)
 
         return wrapper
@@ -88,7 +108,6 @@ class TradeTools:
             "cash",
             "equity",
             "last_equity",
-            "portfolio_value",
             "long_market_value",
             "short_market_value",
             "initial_margin",

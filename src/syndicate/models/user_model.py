@@ -4,8 +4,8 @@ from typing import List, Dict
 
 class GuardRails(BaseModel):
     max_concentration: float
-    stop_loss: float
-    take_profit: float
+    stop_loss: float = float("inf")
+    take_profit: float = float("inf")
 
 
 class User(BaseModel):
