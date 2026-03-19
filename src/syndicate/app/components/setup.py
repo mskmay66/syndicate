@@ -140,7 +140,7 @@ class Setup(Vertical):
         guardrail_choice = event.value
         logging.info(f"take_profits changed: {guardrail_choice}")
         self.callbacks.get("guardrails_updated", lambda x: None)(
-            "take_profits", guardrail_choice
+            "take_profit", guardrail_choice
         )
 
     @on(Switch.Changed, "#paper_trade")

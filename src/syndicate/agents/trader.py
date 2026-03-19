@@ -1,3 +1,4 @@
+from typing import List
 from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
@@ -5,13 +6,20 @@ logger = setup_logging(__name__, "trader")
 
 
 def build_trader(llm, tools):
+    def take_profits(watchlist: List, take_profit_limit: float) -> None:
+        """Takes profits for the portfolio
+
+        Args:
+            wathclist (List): The tickers in our portfolio
+            take_profit_limit (float): The profit limit to take profits.
+        """
+        pass
+
     def trader_node(state):
         current_date = state.current_date
         tickers = state.tickers
         fundementals_report = state.fundementals_report
         news_report = state.news_report
-
-        # tools = [get_account_summary, buy_stock, sell_stock, get_latest_quote]
 
         curr_situation = f"{fundementals_report}\n\n{news_report}"
 

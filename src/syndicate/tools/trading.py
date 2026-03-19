@@ -20,7 +20,7 @@ class TradeTools:
             user.broker_api_key.get_secret_value(),
             user.broker_secret_key.get_secret_value(),
             paper=True,
-        )  # TODO: Add paper to user model
+        )
         self.data_client = StockHistoricalDataClient(
             user.broker_api_key.get_secret_value(),
             user.broker_secret_key.get_secret_value(),
