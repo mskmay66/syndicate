@@ -62,3 +62,27 @@ VerticalScroll {
         color: $text;
         content-align: center middle;
 }
+
+Horizontal {
+    layout: horizontal;
+}
+
+#chat {
+    height: 1fr;
+}
+
+#account_plot {
+    height: 30;
+}
+
+DataTable {
+    background: $boost; /* Use a built-in theme color */
+    color: $accent;
+}
+
+DataTable .datatable--header {
+    /* Target the header specifically (internal component class) */
+    background: $boost;
+    color: $accent;
+    text-style: bold;
+}

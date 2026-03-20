@@ -1,8 +1,8 @@
 from typing import Literal, Dict
 from textual.app import App, ComposeResult
 from textual.screen import Screen
-from textual.widgets import Header, Static, Footer, DataTable
-from textual.containers import Container, Horizontal
+from textual.widgets import Header, Static, Footer, DataTable, Input
+from textual.containers import Container, Horizontal, Vertical
 from art import text2art
 import logging
 from logging.handlers import RotatingFileHandler
@@ -37,6 +37,7 @@ def load_user():
 class MainScreen(Screen):
     COLUMNS = (
         "SYMBOL",
+        "SUBMITTED_AT",
         "FILLED_AT",
         "ASSET_CLASS",
         "QTY",
@@ -44,19 +45,22 @@ class MainScreen(Screen):
         "FILLED_AVG_PRICE",
         "TYPE",
         "SIDE",
+        "STATUS",
     )
 
     def compose(self):
-        with Horizontal():
-            yield PlotextPlot()
-            yield DataTable()
+        with Vertical():
+            with Horizontal():
+                yield PlotextPlot(id="account_plot")
+                yield DataTable()
+            yield Input(id="chat", placeholder="Chat with your AI agent")
 
     def on_mount(self):
         plt = self.query_one(PlotextPlot).plt
         user = load_user()
         trade_tools = TradeTools(user)
 
-        orders = trade_tools.get_historical_orders()
+        orders = trade_tools.get_historical_orders(limit=50)
         table = self.query_one(DataTable)
         table.add_columns(*self.COLUMNS)
         for order in orders:
@@ -64,12 +68,13 @@ class MainScreen(Screen):
             row = []
             for k, v in vars(order).items():
                 if k in attrs:
+                    idx = attrs.index(k)
                     if isinstance(v, Enum):
-                        row.append(str(v.name))
+                        row.insert(idx, str(v.name))
                     elif isinstance(v, datetime):
-                        row.append(v.strftime("%Y-%m-%d"))
+                        row.insert(idx, v.strftime("%Y-%m-%d %H:%m"))
                     else:
-                        row.append(v)
+                        row.insert(idx, v)
             table.add_row(*row)
 
         acc_history = trade_tools.get_account_history(60)
