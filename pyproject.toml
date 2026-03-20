@@ -1,7 +1,7 @@
 [project]
 name = "syndicate"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Custom AI stock trader."
 readme = "README.md"
 authors = [
     { name = "Michael May", email = "mskmay66@gmail.com" }
@@ -26,6 +26,7 @@ dependencies = [
     "python-crontab>=3.3.0",
     "pytz>=2025.2",
     "textual>=8.0.2",
+    "textual-plotext>=1.0.1",
     "torch>=2.10.0",
     "transformers>=5.1.0",
     "yfinance>=1.2.0",

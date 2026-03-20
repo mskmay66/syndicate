@@ -7,14 +7,16 @@ from art import text2art
 import logging
 from logging.handlers import RotatingFileHandler
 from textual.logging import TextualHandler
+from textual_plotext import PlotextPlot
 
 from .components.setup import Setup
 from .components.splash import Splash
 
 from ..models import User, GuardRails
-from ..file_manager import add_config_file
+from ..file_manager import add_config_file, read_config_file
 from .callbacks import convert_input_to_cron_expression, register_cron
-from ..secrets import set_all_secrets
+from ..secrets import set_all_secrets, load_all_secrets
+from ..tools import TradeTools
 
 
 logging.basicConfig(
@@ -22,6 +24,31 @@ logging.basicConfig(
     level="NOTSET",
     handlers=[TextualHandler(), RotatingFileHandler(filename=".logs/app.log")],
 )
+
+
+def load_user():
+    user_wo_secrets = read_config_file("user_config.json")
+    app_secrets = load_all_secrets()
+    return User(**(user_wo_secrets | app_secrets))
+
+
+class MainScreen(Screen):
+    def compose(self):
+        yield PlotextPlot()
+
+    def on_mount(self):
+        plt = self.query_one(PlotextPlot).plt
+        user = load_user()
+        trade_tools = TradeTools(user)
+        acc_history = trade_tools.get_account_history(60)
+        x = list(range(60))
+        y = [equity for equity in acc_history.equity if equity > 0]
+        plt.plot(x, y, color="green")
+
+        plt.title("Account Equity over the Previous 60 Days")
+        plt.xticks(x)
+        plt.ylabel("Account Equity")
+        plt.show()
 
 
 class SetupScreen(Screen):  #
@@ -155,7 +182,7 @@ class Syndicate(App):
         ("enter", "enter_app", "Go main screen"),
         ("b", "back", "Go back to splash screen"),
     ]
-    SCREENS = {"splash": SplashScreen, "setup": SetupScreen}
+    SCREENS = {"splash": SplashScreen, "setup": SetupScreen, "main": MainScreen}
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
@@ -169,7 +196,7 @@ class Syndicate(App):
 
     def action_enter_app(self) -> None:
         """An action to go to the main screen."""
-        pass
+        self.push_screen("main")
 
     def action_quit(self) -> None:
         """An action to quit the app."""

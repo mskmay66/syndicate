@@ -5,12 +5,15 @@ import functools
 import inspect
 
 from alpaca.trading.client import TradingClient
-from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
+from alpaca.trading.requests import (
+    MarketOrderRequest,
+    LimitOrderRequest,
+    GetPortfolioHistoryRequest,
+)
 from alpaca.trading.enums import OrderSide, TimeInForce, PositionSide
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
 from alpaca.common.exceptions import APIError
-
 from ..models import User
 
 
@@ -32,6 +35,16 @@ class TradeTools:
             user.broker_api_key.get_secret_value(),
             user.broker_secret_key.get_secret_value(),
         )
+
+    def get_account_history(self, period: int):
+        try:
+            request_params = GetPortfolioHistoryRequest(
+                period=str(period) + "D", timeframe="1D"
+            )
+            portfolio_history = self.trade_client.get_portfolio_history(request_params)
+            return portfolio_history
+        except APIError:
+            return
 
     def take_profits_stop_loss(self):
         if self.user.guardrails.take_profit or self.user.guardrails.stop_loss:
