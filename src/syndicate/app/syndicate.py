@@ -1,7 +1,7 @@
 from typing import Literal, Dict
 from textual.app import App, ComposeResult
 from textual.screen import Screen
-from textual.widgets import Header, Static, Footer, DataTable, Input
+from textual.widgets import Header, Static, Footer, DataTable, TextArea
 from textual.containers import Container, Horizontal, Vertical
 from art import text2art
 import logging
@@ -50,10 +50,13 @@ class MainScreen(Screen):
 
     def compose(self):
         with Vertical():
-            with Horizontal():
+            with Horizontal(id="main_horizontal"):
                 yield PlotextPlot(id="account_plot")
                 yield DataTable()
-            yield Input(id="chat", placeholder="Chat with your AI agent")
+            chat = TextArea(id="chat", placeholder="Chat with your AI agent")
+            chat.show_line_numbers = False
+            chat.wrap = "soft"
+            yield chat
 
     def on_mount(self):
         plt = self.query_one(PlotextPlot).plt
@@ -80,7 +83,7 @@ class MainScreen(Screen):
         acc_history = trade_tools.get_account_history(60)
         x = list(range(60))
         y = [equity for equity in acc_history.equity if equity > 0]
-        plt.plot(x, y, color="green")
+        plt.plot(x, y, color=(138, 212, 161))
 
         plt.title("Account Equity over the Previous 60 Days")
         plt.xticks(x)

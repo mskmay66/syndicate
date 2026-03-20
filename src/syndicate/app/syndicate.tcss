@@ -12,6 +12,7 @@ Static {
 
 Screen {
     background: $background;
+    height: 100%
 }
 
 Splash {
@@ -63,21 +64,32 @@ VerticalScroll {
         content-align: center middle;
 }
 
+Vertical {
+    height: 100%;
+}
+
 Horizontal {
-    layout: horizontal;
+    /* no height */
+}
+
+#account_plot {
+    height: 25; /* or whatever fixed size you want */
+}
+
+#main_horizontal{
+    height: 25;
 }
 
 #chat {
     height: 1fr;
-}
-
-#account_plot {
-    height: 30;
+    padding: 1;
+    scrollbar-gutter: stable;
 }
 
 DataTable {
     background: $boost; /* Use a built-in theme color */
     color: $accent;
+    height: auto;
 }
 
 DataTable .datatable--header {
