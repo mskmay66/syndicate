@@ -13,6 +13,7 @@ class FundementalTools:
 
     @staticmethod
     def _convert_timestamp_cols(df):
+        df = df.copy()
         for col in df.columns:
             if isinstance(col, pd.Timestamp):
                 df.rename(columns={col: col.strftime("%Y-%m-%d")}, inplace=True)

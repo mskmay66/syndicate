@@ -81,7 +81,7 @@ class NewsTools:
 
             news_response = self.news_client.get_news(news_request)
             if not news_response:
-                return f"Failed to get news for {symbols}. Reason: {news_response['message']}"
+                return f"Failed to get news for {symbols}."
             articles = news_response["news"]
             formatted_response = [
                 {key: dict(article).get(key) for key in keys_to_extract}
