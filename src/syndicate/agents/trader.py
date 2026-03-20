@@ -50,8 +50,7 @@ def build_trader(llm, tools, take_profit_stop_loss):
         tools_used = False
         if len(result.tool_calls) == 0:
             report = result.content
-            logger.info(f"Trader did not use any tools. Report: {report}")
-            # take_profit_stop_loss = [tool for tool in tools if tool.__name__ == "take_profits_stop_loss"][0]
+            logger.info(f"Report: {report}")
             take_profit_stop_loss()
         else:
             logger.info(f"Trader used tools. Tool calls: {result.tool_calls}")

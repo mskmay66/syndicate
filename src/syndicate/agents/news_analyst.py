@@ -42,7 +42,7 @@ def build_news_analyst(llm, tools):
         tools_used = set()
         if len(result.tool_calls) == 0:
             report = result.content
-            logger.info(f"News analyst did not use any tools. Report: {report}")
+            logger.info(f"Report: {report}")
         else:
             logger.info(f"News analyst used tools. Tool calls: {result.tool_calls}")
             for tool_call in result.tool_calls:

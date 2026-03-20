@@ -45,7 +45,7 @@ def build_fundementals_analyst(llm, tools):
         used_all_tools = False
         if len(result.tool_calls) == 0:
             report = result.content
-            logger.info(f"Fundemental analyst report: {report}")
+            logger.info(f"Report: {report}")
         else:
             logger.info(f"Tools used by fundementals analyst: {result.tool_calls}")
             for tool_call in result.tool_calls:

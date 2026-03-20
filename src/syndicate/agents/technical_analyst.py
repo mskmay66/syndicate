@@ -44,7 +44,7 @@ def build_technical_analyst(llm, tools):
         used_all_tools = False
         if len(result.tool_calls) == 0:
             report = result.content
-            logger.info(f"Technical analyst did not use any tools. Report: {report}")
+            logger.info(f"Report: {report}")
         else:
             logger.info(
                 f"Technical analyst used tools. Tool calls: {result.tool_calls}"
