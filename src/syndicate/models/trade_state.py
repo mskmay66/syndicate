@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated, Optional, List
 from pydantic import BaseModel
 import operator
 from langchain_core.messages import BaseMessage
@@ -12,7 +12,7 @@ class TradeState(BaseModel):
     trade_report: Optional[str] = None
     used_tools: bool = False
     messages: Annotated[
-        list[BaseMessage],
+        List[BaseMessage],
         "List of messages exchanged in the trading process",
         operator.add,
     ]
