@@ -1,13 +1,15 @@
 from typing import Literal, Dict
 from textual.app import App, ComposeResult
 from textual.screen import Screen
-from textual.widgets import Header, Static, Footer
-from textual.containers import Container
+from textual.widgets import Header, Static, Footer, DataTable
+from textual.containers import Container, Horizontal
 from art import text2art
 import logging
 from logging.handlers import RotatingFileHandler
 from textual.logging import TextualHandler
 from textual_plotext import PlotextPlot
+from enum import Enum
+from datetime import datetime
 
 from .components.setup import Setup
 from .components.splash import Splash
@@ -33,13 +35,43 @@ def load_user():
 
 
 class MainScreen(Screen):
+    COLUMNS = (
+        "SYMBOL",
+        "FILLED_AT",
+        "ASSET_CLASS",
+        "QTY",
+        "FILLED_QTY",
+        "FILLED_AVG_PRICE",
+        "TYPE",
+        "SIDE",
+    )
+
     def compose(self):
-        yield PlotextPlot()
+        with Horizontal():
+            yield PlotextPlot()
+            yield DataTable()
 
     def on_mount(self):
         plt = self.query_one(PlotextPlot).plt
         user = load_user()
         trade_tools = TradeTools(user)
+
+        orders = trade_tools.get_historical_orders()
+        table = self.query_one(DataTable)
+        table.add_columns(*self.COLUMNS)
+        for order in orders:
+            attrs = [c.lower() for c in self.COLUMNS]
+            row = []
+            for k, v in vars(order).items():
+                if k in attrs:
+                    if isinstance(v, Enum):
+                        row.append(str(v.name))
+                    elif isinstance(v, datetime):
+                        row.append(v.strftime("%Y-%m-%d"))
+                    else:
+                        row.append(v)
+            table.add_row(*row)
+
         acc_history = trade_tools.get_account_history(60)
         x = list(range(60))
         y = [equity for equity in acc_history.equity if equity > 0]

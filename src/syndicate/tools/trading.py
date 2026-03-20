@@ -9,8 +9,9 @@ from alpaca.trading.requests import (
     MarketOrderRequest,
     LimitOrderRequest,
     GetPortfolioHistoryRequest,
+    GetOrdersRequest,
 )
-from alpaca.trading.enums import OrderSide, TimeInForce, PositionSide
+from alpaca.trading.enums import OrderSide, TimeInForce, PositionSide, QueryOrderStatus
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockLatestQuoteRequest
 from alpaca.common.exceptions import APIError
@@ -35,6 +36,17 @@ class TradeTools:
             user.broker_api_key.get_secret_value(),
             user.broker_secret_key.get_secret_value(),
         )
+
+    def get_historical_orders(self, limit: int = 10):
+        try:
+            request_params = GetOrdersRequest(
+                status=QueryOrderStatus.ALL,
+                limit=limit,
+                nested=True,  # Displays nested OCO/bracket orders
+            )
+            return self.trade_client.get_orders(filter=request_params)
+        except APIError:
+            return
 
     def get_account_history(self, period: int):
         try:
