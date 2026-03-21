@@ -80,10 +80,47 @@ Horizontal {
     height: 25;
 }
 
-#chat {
-    height: 1fr;
+MessageBox {
+    height: 5;
+}
+
+/* Base message styling */
+.message {
     padding: 1;
-    scrollbar-gutter: stable;
+    max-width: 60%;
+    border: round transparent;
+}
+
+/* User messages → RIGHT */
+.question {
+    background: $boost;
+    align: right middle;
+    dock: right;
+}
+
+/* AI messages → LEFT */
+.answer {
+    background: $boost;
+    align: left middle;
+    dock: left;
+}
+
+/* Conversation fills ALL remaining space */
+#conversation_box {
+    height: 1fr;
+    overflow-y: auto;
+    padding: 1;
+}
+
+/* Input is fixed at bottom */
+#chat {
+    height: 3;
+    border: round $accent;
+}
+
+/* Optional: nicer spacing */
+#conversation_box > * {
+    margin-bottom: 1;
 }
 
 DataTable {

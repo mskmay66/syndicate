@@ -1,24 +1,28 @@
 from typing import Literal, Dict
 from textual.app import App, ComposeResult
+from textual.widget import Widget
 from textual.screen import Screen
-from textual.widgets import Header, Static, Footer, DataTable, TextArea
-from textual.containers import Container, Horizontal, Vertical
+from textual.widgets import Header, Static, Footer, DataTable, Input
+from textual.containers import Container, Horizontal, Vertical, VerticalScroll
 from art import text2art
 import logging
 from logging.handlers import RotatingFileHandler
 from textual.logging import TextualHandler
 from textual_plotext import PlotextPlot
+from textual import on
 from enum import Enum
 from datetime import datetime
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from .components.setup import Setup
 from .components.splash import Splash
 
-from ..models import User, GuardRails
+from ..models import User, GuardRails, ChatState
 from ..file_manager import add_config_file, read_config_file
 from .callbacks import convert_input_to_cron_expression, register_cron
 from ..secrets import set_all_secrets, load_all_secrets
 from ..tools import TradeTools
+from ..chat_graph import ChatGraph
 
 
 logging.basicConfig(
@@ -34,6 +38,16 @@ def load_user():
     return User(**(user_wo_secrets | app_secrets))
 
 
+class MessageBox(Widget):
+    def __init__(self, text: str, role: str) -> None:
+        self.text = text
+        self.role = role
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield Static(self.text, classes=f"message {self.role}")
+
+
 class MainScreen(Screen):
     COLUMNS = (
         "SYMBOL",
@@ -47,21 +61,25 @@ class MainScreen(Screen):
         "SIDE",
         "STATUS",
     )
+    user = load_user()
 
     def compose(self):
         with Vertical():
             with Horizontal(id="main_horizontal"):
                 yield PlotextPlot(id="account_plot")
                 yield DataTable()
-            chat = TextArea(id="chat", placeholder="Chat with your AI agent")
-            chat.show_line_numbers = False
-            chat.wrap = "soft"
-            yield chat
+            # Scrollable conversation
+            yield VerticalScroll(id="conversation_box")
+
+            # Bottom input (always visible)
+            yield Input(id="chat", placeholder="Chat with your AI agent")
+
+            yield Footer()
 
     def on_mount(self):
+        self.query_one("#chat", Input).focus()
         plt = self.query_one(PlotextPlot).plt
-        user = load_user()
-        trade_tools = TradeTools(user)
+        trade_tools = TradeTools(self.user)
 
         orders = trade_tools.get_historical_orders(limit=50)
         table = self.query_one(DataTable)
@@ -89,6 +107,38 @@ class MainScreen(Screen):
         plt.xticks(x)
         plt.ylabel("Account Equity")
         plt.show()
+
+    @on(Input.Submitted, "#chat")
+    async def process_conversation(self, event: Input.Submitted):
+        message = event.value.strip()
+        if not message:
+            return
+
+        conversation_box = self.query_one("#conversation_box")
+
+        # Add user message
+        conversation_box.mount(MessageBox(message, "question"))
+        conversation_box.scroll_end(animate=True)
+
+        # Clear input
+        input_box = self.query_one("#chat", Input)
+        with input_box.prevent(Input.Changed):
+            input_box.value = ""
+
+        conversation_box.scroll_end(animate=False)
+        messages = [
+            SystemMessage(content="You are a helpful assistant."),
+            HumanMessage(content=message),
+        ]
+        state = ChatState(messages=messages)
+        answer = ChatGraph(self.user).run(state)
+        logging.info(f"Response: {answer}")
+        conversation_box.mount(
+            MessageBox(
+                answer["messages"][-1].content,
+                "answer",
+            )
+        )
 
 
 class SetupScreen(Screen):  #

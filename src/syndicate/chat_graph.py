@@ -1,6 +1,5 @@
 from langgraph.graph import END, StateGraph, START
 from langgraph.prebuilt import ToolNode
-import uuid
 
 from .models import ChatState, User
 from .llm_clients import create_llm_client
@@ -23,7 +22,7 @@ class ChatGraph:
 
         def should_use_tools(state):
             last = state.messages[-1]
-            if getattr(last, "tool_calls", None) and not state.used_tools:
+            if getattr(last, "tool_calls", None):
                 return "tools"
             return "continue"
 
@@ -33,17 +32,16 @@ class ChatGraph:
 
         workflow.add_node("relationship_tools", ToolNode(tools=self.tools))
         workflow.add_conditional_edges(
-            self.agent,
+            "relationship_manager",
             should_use_tools,
             {
                 "tools": "relationship_tools",
                 "continue": END,
             },
         )
+        workflow.add_edge("relationship_tools", "relationship_manager")
         return workflow.compile()
 
     def run(self, initial_state: ChatState):
         graph = self.build_graph()
-        return graph.invoke(
-            initial_state, config={"recursion_limit": 5, "thread_id": uuid.uuid4()}
-        )
+        return graph.invoke(initial_state, config={"recursion_limit": 5})

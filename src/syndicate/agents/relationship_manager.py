@@ -1,19 +1,10 @@
 from ..log_config import setup_logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.chat_history import InMemoryChatMessageHistory
-from langchain_core.runnables.history import RunnableWithMessageHistory
 
 logger = setup_logging(__name__, "relationship_manager")
 
 
 def build_relationship_manager(llm, tools):
-    store = {}
-
-    def get_session_history(session_id: str):
-        if session_id not in store:
-            store[session_id] = InMemoryChatMessageHistory()
-        return store[session_id]
-
     def relationship_manager_node(state):
         system_prompt = "You are a financial relationship manager. Your task is to interact with clients, answer their questions regarding their portfolio, and explain actions that other members of the traiding team take."
 
@@ -35,25 +26,9 @@ def build_relationship_manager(llm, tools):
         prompt = prompt.partial(tool_names=tools)
 
         chain = prompt | llm.bind_tools(tools)
-        with_history = RunnableWithMessageHistory(
-            chain,
-            get_session_history,
-            input_messages_key="question",
-            history_messages_key="history",
-        )
-
         logger.info("Invoking Relationship manager ")
-        result = with_history.invoke(state.messages)
+        result = chain.invoke(state.messages)
         logger.info(f"Relationship manager  result: {result}")
-
-        tools_used = False
-        if tools_used:
-            report = result.content
-            logger.info(f"Report: {report}")
-        else:
-            logger.info(
-                f"Relationship manager used tools. Tool calls: {result.tool_calls}"
-            )
         return {"messages": [result]}
 
     return relationship_manager_node
