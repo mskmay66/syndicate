@@ -1,6 +1,5 @@
 from typing import Literal, Dict
 from textual.app import App, ComposeResult
-from textual.widget import Widget
 from textual.screen import Screen
 from textual.widgets import Header, Static, Footer, DataTable, Input
 from textual.containers import Container, Horizontal, Vertical, VerticalScroll
@@ -36,16 +35,6 @@ def load_user():
     user_wo_secrets = read_config_file("user_config.json")
     app_secrets = load_all_secrets()
     return User(**(user_wo_secrets | app_secrets))
-
-
-class MessageBox(Widget):
-    def __init__(self, text: str, role: str) -> None:
-        self.text = text
-        self.role = role
-        super().__init__()
-
-    def compose(self) -> ComposeResult:
-        yield Static(self.text, classes=f"message {self.role}")
 
 
 class MainScreen(Screen):
@@ -117,7 +106,7 @@ class MainScreen(Screen):
         conversation_box = self.query_one("#conversation_box")
 
         # Add user message
-        conversation_box.mount(MessageBox(message, "question"))
+        conversation_box.mount(Static(message, classes="message question"))
         conversation_box.scroll_end(animate=True)
 
         # Clear input
@@ -134,11 +123,13 @@ class MainScreen(Screen):
         answer = ChatGraph(self.user).run(state)
         logging.info(f"Response: {answer}")
         conversation_box.mount(
-            MessageBox(
+            Static(
                 answer["messages"][-1].content,
-                "answer",
+                classes="message answer",
             )
         )
+        conversation_box.refresh(layout=True)
+        conversation_box.scroll_end(animate=True)
 
 
 class SetupScreen(Screen):  #

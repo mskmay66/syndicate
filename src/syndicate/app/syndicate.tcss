@@ -80,36 +80,37 @@ Horizontal {
     height: 25;
 }
 
-MessageBox {
-    height: 5;
+Static {
+    layout: horizontal;
+    height: auto;
+    align-horizontal: center;
 }
 
 /* Base message styling */
 .message {
-    padding: 1;
-    max-width: 60%;
-    border: round transparent;
+    width: 100%;
+    max-width: 100%;
 }
 
-/* User messages → RIGHT */
+.message > * {
+    max-width: 50%;
+    border: tall black;
+    padding: 1 3;
+}
+
 .question {
-    background: $boost;
-    align: right middle;
-    dock: right;
+    align: left top;
 }
 
-/* AI messages → LEFT */
 .answer {
-    background: $boost;
-    align: left middle;
-    dock: left;
+    align: right top;
 }
 
 /* Conversation fills ALL remaining space */
 #conversation_box {
     height: 1fr;
     overflow-y: auto;
-    padding: 1;
+    layout: vertical;
 }
 
 /* Input is fixed at bottom */
