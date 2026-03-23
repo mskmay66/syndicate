@@ -33,7 +33,7 @@ jobs:
 
     - name: Create a virtual environment and sync dependencies
       run: |
-        uv sync --all-groups
+        uv sync
 
     - name: Install test dependencies (e.g., pytest, ruff)
       run: |
