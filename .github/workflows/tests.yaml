@@ -33,18 +33,7 @@ jobs:
 
     - name: Create a virtual environment and sync dependencies
       run: |
-        # uv venv .venv
-        # source .venv/bin/activate
-        # Use uv sync to install dependencies from pyproject.toml
-        uv sync
-        # Or install specific requirements files
-        # uv pip install -r requirements.txt
-
-    - name: Install test dependencies (e.g., pytest, ruff)
-      run: |
-        source .venv/bin/activate
-        # Use uv add (or uv pip install) to add development/test tools
-        uv add pytest pytest-cov ruff
+        uv sync --all-groups
 
     - name: Run tests with pytest
       run: |
