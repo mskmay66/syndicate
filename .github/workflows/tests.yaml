@@ -38,7 +38,7 @@ jobs:
     - name: Install test dependencies (e.g., pytest, ruff)
       run: |
         # Use uv add (or uv pip install) to add development/test tools
-        uv add pytest pytest-cov ruff
+        uv add pytest pytest-cov ruff --python ${{ matrix.python-version }}
 
     - name: Run tests with pytest
       run: |
