@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Michael May", email = "mskmay66@gmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "alpaca-py>=0.43.2",
     "art>=6.5",
