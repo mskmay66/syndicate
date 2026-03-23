@@ -27,7 +27,7 @@ jobs:
       # Use the setup-uv action to install uv and cache it
       uses: astral-sh/setup-uv@v1
       with:
-        uv-version: 0.1.x # Use the latest version or pin to a specific one
+        uv-version: 0.10.x # Use the latest version or pin to a specific one
         # Optional: cache the uv package cache
         cache-key-prefix: "v1-uv-cache"
 
