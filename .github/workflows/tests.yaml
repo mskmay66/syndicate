@@ -27,13 +27,19 @@ jobs:
       # Use the setup-uv action to install uv and cache it
       uses: astral-sh/setup-uv@v1
       with:
-        uv-version: 0.10.x # Use the latest version or pin to a specific one
+        uv-version: 0.1.x # Use the latest version or pin to a specific one
         # Optional: cache the uv package cache
         cache-key-prefix: "v1-uv-cache"
 
     - name: Create a virtual environment and sync dependencies
       run: |
         uv sync --all-groups
+
+    - name: Install test dependencies (e.g., pytest, ruff)
+      run: |
+        source .venv/bin/activate
+        # Use uv add (or uv pip install) to add development/test tools
+        uv add pytest pytest-cov ruff
 
     - name: Run tests with pytest
       run: |
