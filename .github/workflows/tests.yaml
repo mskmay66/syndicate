@@ -33,7 +33,7 @@ jobs:
 
     - name: Create a virtual environment and sync dependencies
       run: |
-        uv venv --python 3.11 .venv
+        uv venv .venv
         source .venv/bin/activate
         # Use uv sync to install dependencies from pyproject.toml
         uv sync
