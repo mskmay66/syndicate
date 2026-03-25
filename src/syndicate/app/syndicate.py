@@ -32,9 +32,14 @@ logging.basicConfig(
 
 
 def load_user():
-    user_wo_secrets = read_config_file("user_config.json")
-    app_secrets = load_all_secrets()
-    return User(**(user_wo_secrets | app_secrets))
+    try:
+        user_wo_secrets = read_config_file("user_config.json")
+        app_secrets = load_all_secrets()
+        return User(**(user_wo_secrets | app_secrets))
+    except FileNotFoundError:
+        logging.info("new user found")
+    except Exception as e:
+        logging.error(f"Failed to load user data with {e}")
 
 
 class MainScreen(Screen):
@@ -155,6 +160,10 @@ class SetupScreen(Screen):  #
     def on_mount(self) -> None:
         """Called when the screen is mounted. Start the typing effect."""
         self.title = text2art("Syndicate", font="slant")
+        self.user = load_user()
+        logging.info(f"Loaded user on mount: {self.user}")
+        setup = self.query_one(Setup)
+        setup.user = self.user
 
     def _watchlist_callback(self, watchlist: str) -> None:
         """A callback function to handle watchlist updates."""
@@ -205,37 +214,40 @@ class SetupScreen(Screen):  #
     def action_finish_setup(self) -> None:
         """ "Handle the finish setup action."""
         logging.info("Finishing setup and entering app")
+        if self.user:
+            # the user already exits
+            pass
+        else:
+            # generate the cron
+            cron = convert_input_to_cron_expression(
+                self.cron_schedule, self.cron_expression
+            )
+            register_cron(cron)
+            logging.info(f"Generated cron: {cron}")
 
-        # generate the cron
-        cron = convert_input_to_cron_expression(
-            self.cron_schedule, self.cron_expression
-        )
-        register_cron(cron)
-        logging.info(f"Generated cron: {cron}")
+            # create guardrails
+            guardrails = GuardRails(**self.guardrails)
 
-        # create guardrails
-        guardrails = GuardRails(**self.guardrails)
+            # create a UserConfig
+            user_config = User(
+                model_provider=self.provider,
+                model_name=self.model,
+                watchlist=self.watchlist.strip().split(","),
+                broker_api_key=self.broker_api_key,
+                broker_secret_key=self.broker_secret_key,
+                model_api_key=self.model_api_key,
+                alpha_vantage_api_key=self.technical_api_key,
+                cron=cron,
+                guardrails=guardrails,
+                paper=self.paper,
+            )
 
-        # create a UserConfig
-        user_config = User(
-            model_provider=self.provider,
-            model_name=self.model,
-            watchlist=self.watchlist.strip().split(","),
-            broker_api_key=self.broker_api_key,
-            broker_secret_key=self.broker_secret_key,
-            model_api_key=self.model_api_key,
-            alpha_vantage_api_key=self.technical_api_key,
-            cron=cron,
-            guardrails=guardrails,
-            paper=self.paper,
-        )
+            # Save the user config to a file
+            add_config_file(user_config.to_json(), "user_config.json")
 
-        # Save the user config to a file
-        add_config_file(user_config.to_json(), "user_config.json")
-
-        # add the secrets to the keyring
-        set_all_secrets(user_config.get_secrets())
-        self.app.pop_screen()
+            # add the secrets to the keyring
+            set_all_secrets(user_config.get_secrets())
+            self.app.pop_screen()
 
 
 class SplashScreen(Screen):

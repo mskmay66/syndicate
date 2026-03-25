@@ -3,6 +3,7 @@ from textual.app import ComposeResult
 from textual.containers import Vertical, VerticalScroll
 from textual.widgets import Static, Input, Select, Switch
 from textual import on
+from textual.reactive import reactive
 import logging
 from logging.handlers import RotatingFileHandler
 from textual.logging import TextualHandler
@@ -22,6 +23,8 @@ logging.basicConfig(
 
 class Setup(Vertical):
     """A Textual app for user login and signup."""
+
+    user = reactive(None)
 
     def __init__(self, callbacks: dict[str, Callable] | None = None) -> None:
         super().__init__()
@@ -73,6 +76,42 @@ class Setup(Vertical):
             with Vertical(classes="box"):
                 yield Static("Do you want to paper trade?")
                 yield Switch(id="paper_trade")
+
+    def watch_user(self, new_user):
+        if new_user:
+            watchlist = self.query_one("#watchlist_input")
+            provider = self.query_one("#provider_select")
+            model_api = self.query_one("#model_api_input")
+            broker_api_input = self.query_one("#broker_api_input")
+            broker_secret_input = self.query_one("#broker_secret_input")
+            technical_api_input = self.query_one("#technical_api_input")
+            cron_input = self.query_one("#cron_input")
+            conc_input = self.query_one("#max_position_concentration_input")
+            sp_input = self.query_one("#stop_losses_input")
+            tp_input = self.query_one("#take_profits_input")
+            paper_trade = self.query_one("#paper_trade")
+
+            provider_value = new_user.model_provider.lower().replace(" ", "_")
+
+            watchlist.value = ", ".join(new_user.watchlist)
+            provider.value = provider_value
+            model_component = self.query_one(
+                "#model_choice_from_provider", ModelChoiceFromProvider
+            )
+            model_value = new_user.model_name.replace(".", "_")
+            model_component.provider = provider_value
+            model_component.pending_model = model_value
+            model_api.value = new_user.model_api_key.get_secret_value()
+            broker_api_input.value = new_user.broker_api_key.get_secret_value()
+            broker_secret_input.value = new_user.broker_secret_key.get_secret_value()
+            technical_api_input.value = (
+                new_user.alpha_vantage_api_key.get_secret_value()
+            )
+            cron_input.value = new_user.cron
+            conc_input.value = str(new_user.guardrails.max_concentration)
+            sp_input.value = str(new_user.guardrails.stop_loss)
+            tp_input.value = str(new_user.guardrails.take_profit)
+            paper_trade.value = new_user.paper
 
     @on(Select.Changed, "#provider_select")
     def provider_changed(self, event: Select.Changed) -> None:
