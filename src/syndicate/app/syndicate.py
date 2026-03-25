@@ -62,7 +62,6 @@ class MainScreen(Screen):
 
             # Bottom input (always visible)
             yield Input(id="chat", placeholder="Chat with your AI agent")
-
             yield Footer()
 
     def on_mount(self):

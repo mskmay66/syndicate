@@ -1,7 +1,7 @@
 $accent: #8AD4A1;
 
 Header {
-    height: 7; /* Increase height */
+    height: 7;
     background: $background;
     color: $accent;
 }
@@ -78,12 +78,6 @@ Horizontal {
 
 #main_horizontal{
     height: 25;
-}
-
-Static {
-    layout: horizontal;
-    height: auto;
-    align-horizontal: center;
 }
 
 /* Base message styling */
