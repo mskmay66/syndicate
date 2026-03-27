@@ -78,6 +78,11 @@ class Setup(Vertical):
                 yield Switch(id="paper_trade")
 
     def watch_user(self, new_user):
+        def get_freq_from_cron(cron):
+            cron_order = [None, "hourly", "daily", "weekly", "monthly"]
+            idx = cron.split(" ").index("*")
+            return cron_order[idx]
+
         if new_user:
             watchlist = self.query_one("#watchlist_input")
             provider = self.query_one("#provider_select")
@@ -85,7 +90,10 @@ class Setup(Vertical):
             broker_api_input = self.query_one("#broker_api_input")
             broker_secret_input = self.query_one("#broker_secret_input")
             technical_api_input = self.query_one("#technical_api_input")
-            cron_input = self.query_one("#cron_input")
+
+            cron_component = self.query_one(CronInput)
+            cron_sch = cron_component.query_one("#cron_select")
+            cron_input = cron_component.query_one("#cron_expression_input")
             conc_input = self.query_one("#max_position_concentration_input")
             sp_input = self.query_one("#stop_losses_input")
             tp_input = self.query_one("#take_profits_input")
@@ -107,6 +115,8 @@ class Setup(Vertical):
             technical_api_input.value = (
                 new_user.alpha_vantage_api_key.get_secret_value()
             )
+
+            cron_sch.value = get_freq_from_cron(new_user.cron)
             cron_input.value = new_user.cron
             conc_input.value = str(new_user.guardrails.max_concentration)
             sp_input.value = str(new_user.guardrails.stop_loss)
@@ -168,6 +178,7 @@ class Setup(Vertical):
     def cron_expression_submitted(self, event: Input.Changed) -> None:
         """Handle the cron expression input submission."""
         cron_expression = event.value
+        print("INPUT CHANGED TO:", event.value)
         self.callbacks.get("cron_expression_updated", lambda x: None)(cron_expression)
 
     @on(Input.Changed, "#max_position_concentration_input")

@@ -52,7 +52,6 @@ Select.-expanded > SelectCurrent {
     margin-bottom: 1;
     margin-top: 1;
 }
-
 VerticalScroll {
     overflow-y: auto;
 }.box {
@@ -62,10 +61,6 @@ VerticalScroll {
         background: $background;
         color: $text;
         content-align: center middle;
-}
-
-Vertical {
-    height: 100%;
 }
 
 Horizontal {
