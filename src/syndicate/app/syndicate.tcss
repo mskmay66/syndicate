@@ -93,6 +93,7 @@ Horizontal {
 
 .answer {
     align: right top;
+    color: $accent
 }
 
 /* Conversation fills ALL remaining space */

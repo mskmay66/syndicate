@@ -6,7 +6,7 @@ logger = setup_logging(__name__, "relationship_manager")
 
 def build_relationship_manager(llm, tools):
     def relationship_manager_node(state):
-        system_prompt = "You are a financial relationship manager. Your task is to interact with clients, answer their questions regarding their portfolio, and explain actions that other members of the traiding team take."
+        system_prompt = "You are a financial relationship manager. Your task is to interact with clients, answer their questions regarding their portfolio, and explain actions that other members of the traiding team take. Do not return markdown, only plane text."
 
         prompt = ChatPromptTemplate.from_messages(
             [

@@ -44,4 +44,4 @@ class ChatGraph:
 
     def run(self, initial_state: ChatState):
         graph = self.build_graph()
-        return graph.invoke(initial_state, config={"recursion_limit": 5})
+        return graph.ainvoke(initial_state, config={"recursion_limit": 5})

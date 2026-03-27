@@ -1,8 +1,10 @@
+import asyncio
 from typing import Literal, Dict
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Header, Static, Footer, DataTable, Input
 from textual.containers import Container, Horizontal, Vertical, VerticalScroll
+from textual import work
 from art import text2art
 import logging
 from logging.handlers import RotatingFileHandler
@@ -101,6 +103,53 @@ class MainScreen(Screen):
         plt.ylabel("Account Equity")
         plt.show()
 
+    async def animate_loading(self, widget):
+        dots = ["", ".", "..", "..."]
+        i = 0
+        while True:
+            widget.update(dots[i % len(dots)])
+            i += 1
+            await asyncio.sleep(0.5)
+
+    async def typewriter(self, widget, text):
+        output = "[AGENT] "
+        for char in text:
+            output += char
+            widget.update(output + "▌")
+            await asyncio.sleep(0.02)
+        widget.update(output)
+
+    @work
+    async def invoke_chatbot(self, message):
+        conversation_box = self.query_one("#conversation_box")
+
+        messages = [
+            SystemMessage(content="You are a helpful assistant."),
+            HumanMessage(content=message),
+        ]
+        state = ChatState(messages=messages)
+
+        loading = Static("", classes="message answer")
+        conversation_box.mount(loading)
+        task = asyncio.create_task(self.animate_loading(loading))
+
+        answer = await ChatGraph(self.user).run(state)
+
+        task.cancel()
+        loading.remove()
+        logging.info(f"Response: {answer}")
+        # reply = Static("[AGENT] ", classes="message answer", markup=False)
+        conversation_box.mount(
+            Static(
+                "[AGENT] " + answer["messages"][-1].content,
+                classes="message answer",
+                markup=False,
+            )
+        )
+        # self.typewriter(reply, answer["messages"][-1].content)
+        conversation_box.refresh(layout=True)
+        conversation_box.scroll_end(animate=True)
+
     @on(Input.Submitted, "#chat")
     async def process_conversation(self, event: Input.Submitted):
         message = event.value.strip()
@@ -110,7 +159,9 @@ class MainScreen(Screen):
         conversation_box = self.query_one("#conversation_box")
 
         # Add user message
-        conversation_box.mount(Static(message, classes="message question"))
+        conversation_box.mount(
+            Static("[USER] " + message, classes="message question", markup=False)
+        )
         conversation_box.scroll_end(animate=True)
 
         # Clear input
@@ -118,22 +169,7 @@ class MainScreen(Screen):
         with input_box.prevent(Input.Changed):
             input_box.value = ""
 
-        conversation_box.scroll_end(animate=False)
-        messages = [
-            SystemMessage(content="You are a helpful assistant."),
-            HumanMessage(content=message),
-        ]
-        state = ChatState(messages=messages)
-        answer = ChatGraph(self.user).run(state)
-        logging.info(f"Response: {answer}")
-        conversation_box.mount(
-            Static(
-                answer["messages"][-1].content,
-                classes="message answer",
-            )
-        )
-        conversation_box.refresh(layout=True)
-        conversation_box.scroll_end(animate=True)
+        self.invoke_chatbot(message)
 
 
 class SetupScreen(Screen):  #
