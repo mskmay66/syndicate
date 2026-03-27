@@ -111,14 +111,6 @@ class MainScreen(Screen):
             i += 1
             await asyncio.sleep(0.5)
 
-    async def typewriter(self, widget, text):
-        output = "[AGENT] "
-        for char in text:
-            output += char
-            widget.update(output + "▌")
-            await asyncio.sleep(0.02)
-        widget.update(output)
-
     @work
     async def invoke_chatbot(self, message):
         conversation_box = self.query_one("#conversation_box")
@@ -138,7 +130,6 @@ class MainScreen(Screen):
         task.cancel()
         loading.remove()
         logging.info(f"Response: {answer}")
-        # reply = Static("[AGENT] ", classes="message answer", markup=False)
         conversation_box.mount(
             Static(
                 "[AGENT] " + answer["messages"][-1].content,
@@ -146,7 +137,6 @@ class MainScreen(Screen):
                 markup=False,
             )
         )
-        # self.typewriter(reply, answer["messages"][-1].content)
         conversation_box.refresh(layout=True)
         conversation_box.scroll_end(animate=True)
 
