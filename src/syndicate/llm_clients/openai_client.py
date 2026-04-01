@@ -44,22 +44,8 @@ class OpenAIClient(BaseLLMClient):
 
         if self.provider == "xai":
             llm_kwargs["base_url"] = "https://api.x.ai/v1"
-            # api_key = get_secret_from_keyring("XAI_API_KEY")
-            # if api_key:
-            #     llm_kwargs["api_key"] = api_key
-        elif self.provider == "openrouter":
-            llm_kwargs["base_url"] = "https://openrouter.ai/api/v1"
-            # api_key = get_secret_from_keyring("OPENROUTER_API_KEY")
-            # if api_key:
-            #     llm_kwargs["api_key"] = api_key
-        elif self.provider == "ollama":
-            llm_kwargs["base_url"] = "http://localhost:11434/v1"
-            llm_kwargs["api_key"] = "ollama"  # Ollama doesn't require auth
         elif self.provider == "moonshot":
             llm_kwargs["base_url"] = "https://api.moonshot.ai/v1"
-            # api_key = get_secret_from_keyring("MOONSHOT_API_KEY")
-            # if api_key:
-            #     llm_kwargs["api_key"] = api_key
         elif self.base_url:
             llm_kwargs["base_url"] = self.base_url
 
