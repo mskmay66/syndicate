@@ -16,4 +16,4 @@ class ApiKeyInput(Vertical):
             f"Enter your API key for your {self.provider}:",
             id="api_key_input_title",
         )
-        yield Input(placeholder="Enter your API key", id=self.input_id)
+        yield Input(placeholder="Enter your API key", id=self.input_id, password=True)
