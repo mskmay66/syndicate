@@ -1,4 +1,3 @@
-<p align="center">
 ```
    _____                        __    _                   __
   / ___/   __  __   ____   ____/ /   (_)  _____  ____ _  / /_  ___
@@ -7,7 +6,6 @@
 /____/   \__, /  /_/ /_/ \__,_/   /_/   \___/  \__,_/  \__/  \___/
         /____/
 ```
-</p>
 
 Syndicate is an AI stock trading agent with a built-in integration with the [alpaca](https://alpaca.markets/) brokerage API. With it you can automatically follow and trade a given watchlist of tickers. It contains:
 
@@ -55,3 +53,15 @@ From there simply press the `s` key to toggle to the setup screen. This is what 
 From here just follow the prompts from the TUI to fill things out, if you are confused about what anything means, read on and it will be explained.
 
 ## How to Configure your Agent
+
+There are lot of choices you need to make when you first confiure your agent, let's go through them one by one.
+
+1. What stocks do you want to follow?
+
+This should be straight forward, pick whatever tickers you are interested in.
+
+2. What model do you want to use?
+
+If you already have a subscription/account with a model provider that is support this could be easy, if not there are few factors to consider. First, which one is best. [This](https://arxiv.org/html/2510.02209v1) paper contains a ranking of llm's if you need to decide. TLDR: Kimi and Qwen seem to dominate for these sorts of task, but make up your own mind. Finally, what is the cost of these models? I will elave that to you, but from my demo you can see that i am running kimi becasue it is both good and relatively cheap.
+
+## How do I get all these damn keys?
