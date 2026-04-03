@@ -44,11 +44,11 @@ syndicate
 
 You will then be confronted with the TUI which should look something like this:
 
-[![Splash Screen Demo](images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov)](images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov)
+<video src="images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov" width="600" controls></video>
 
 From there simply press the `s` key to toggle to the setup screen. This is what you should see (minus my setup, yours should be blank)
 
-[![Setup Screen](images/Screen Recording 2026-04-03 at 5.54.38 PM.mov)](images/Screen Recording 2026-04-03 at 5.54.38 PM.mov)
+<video src="images/Screen Recording 2026-04-03 at 5.54.38 PM.mov" width="600" controls></video>
 
 From here just follow the prompts from the TUI to fill things out, if you are confused about what anything means, read on and it will be explained.
 
