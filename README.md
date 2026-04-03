@@ -1,9 +1,11 @@
+```
    _____                        __    _                   __
   / ___/   __  __   ____   ____/ /   (_)  _____  ____ _  / /_  ___
   \__ \   / / / /  / __ \ / __  /   / /  / ___/ / __ `/ / __/ / _ \
  ___/ /  / /_/ /  / / / // /_/ /   / /  / /__  / /_/ / / /_  /  __/
 /____/   \__, /  /_/ /_/ \__,_/   /_/   \___/  \__,_/  \__/  \___/
         /____/
+```
 
 Syndicate is an AI stock trading agent with a built-in integration with the [alpaca](https://alpaca.markets/) brokerage API. With it you can automatically follow and trade a given watchlist of tickers. It contains:
 
