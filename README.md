@@ -14,7 +14,7 @@ Syndicate is an AI stock trading agent with a built-in integration with the [alp
 * A techinical analyst to look at the technical indicators for each stock, and
 * A trader to buy or sell tickers based on the recommendations of the former analysts, subject to determinstic guardrails set by the user.
 
-The package is free to download from pypi or this repo and open source, but the operates under a bring-your-own-tokens model: you need a funded account with an LLM provider in order to run it. Currently the package supports anthropic, google, openai, qwen, and moonshot models. The package provides a terminal user interface (TUI) to make setup and monitoring easy and intuitive.
+The package is free to download from pypi or this repo and open source, but operates under a bring-your-own-tokens model: you need a funded account with an LLM provider in order to run it. Currently the package supports anthropic, google, openai, qwen, and moonshot models. The package provides a terminal user interface (TUI) to make setup and monitoring easy and intuitive.
 
 ## Prerequisites
 
@@ -44,11 +44,11 @@ syndicate
 
 You will then be confronted with the TUI which should look something like this:
 
-![Splash Screen Demo](images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov)
+[![Splash Screen Demo](images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov)](images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov)
 
 From there simply press the `s` key to toggle to the setup screen. This is what you should see (minus my setup, yours should be blank)
 
-![Setup Screen](images/Screen Recording 2026-04-03 at 5.54.38 PM.mov)
+[![Setup Screen](images/Screen Recording 2026-04-03 at 5.54.38 PM.mov)](images/Screen Recording 2026-04-03 at 5.54.38 PM.mov)
 
 From here just follow the prompts from the TUI to fill things out, if you are confused about what anything means, read on and it will be explained.
 
@@ -62,6 +62,10 @@ This should be straight forward, pick whatever tickers you are interested in.
 
 2. What model do you want to use?
 
-If you already have a subscription/account with a model provider that is support this could be easy, if not there are few factors to consider. First, which one is best. [This](https://arxiv.org/html/2510.02209v1) paper contains a ranking of llm's if you need to decide. TLDR: Kimi and Qwen seem to dominate for these sorts of task, but make up your own mind. Finally, what is the cost of these models? I will elave that to you, but from my demo you can see that i am running kimi becasue it is both good and relatively cheap.
+If you already have a subscription/account with a model provider that is support this could be easy, if not there are few factors to consider. First, which one is best. [This](https://arxiv.org/html/2510.02209v1) paper contains a ranking of llm's if you need to decide.
+
+TLDR: Kimi and Qwen seem to dominate for these sorts of task, but make up your own mind.
+
+Finally, what is the cost of these models? I will leave that to you, but from my demo you can see that i am running kimi becasue it is both good and relatively cheap.
 
 ## How do I get all these damn keys?
