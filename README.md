@@ -48,11 +48,11 @@ syndicate
 
 You will then be confronted with the TUI which should look something like this:
 
-![Splash Screen](images/splash_screen.gif)
+<img src="images/splash_screen.gif" width="500" height="200" />
 
 From there simply press the `s` key to toggle to the setup screen. This is what you should see (minus my setup, yours should be blank)
 
-![Setup Screen](images/setup.gif)
+<img src="images/setup.gif" width="500" height="200" />
 
 From here just follow the prompts from the TUI to fill things out, if you are confused about what anything means, read on and it will be explained.
 
