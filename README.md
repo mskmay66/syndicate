@@ -1,11 +1,15 @@
-```
+<div style="text-align: center;" markdown="1">
+
+<pre>
    _____                        __    _                   __
   / ___/   __  __   ____   ____/ /   (_)  _____  ____ _  / /_  ___
   \__ \   / / / /  / __ \ / __  /   / /  / ___/ / __ `/ / __/ / _ \
  ___/ /  / /_/ /  / / / // /_/ /   / /  / /__  / /_/ / / /_  /  __/
 /____/   \__, /  /_/ /_/ \__,_/   /_/   \___/  \__,_/  \__/  \___/
         /____/
-```
+</pre>
+
+</div>
 
 Syndicate is an AI stock trading agent with a built-in integration with the [alpaca](https://alpaca.markets/) brokerage API. With it you can automatically follow and trade a given watchlist of tickers. It contains:
 
@@ -64,7 +68,7 @@ This should be straight forward, pick whatever tickers you are interested in.
 
 If you already have a subscription/account with a model provider that is support this could be easy, if not there are few factors to consider. First, which one is best. [This](https://arxiv.org/html/2510.02209v1) paper contains a ranking of llm's if you need to decide.
 
-TLDR: Kimi and Qwen seem to dominate for these sorts of task, but make up your own mind.
+**TLDR: Kimi and Qwen seem to dominate for these sorts of task, but make up your own mind.**
 
 Finally, what is the cost of these models? I will leave that to you, but from my demo you can see that i am running kimi becasue it is both good and relatively cheap.
 
