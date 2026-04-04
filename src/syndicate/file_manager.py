@@ -29,7 +29,7 @@ def read_config_file(name: str) -> Dict:
     """Reads a config file from the config directory.
 
     Args:
-        name (str): The name of the config file to read (e.g., "agent.json", "watchlist.json").
+        name (str): The name of the config file to read.
 
     Returns:
         Dict: The contents of the config file as a dictionary.
