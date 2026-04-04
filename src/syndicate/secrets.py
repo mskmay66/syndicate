@@ -58,7 +58,8 @@ def set_all_secrets(secrets: Dict) -> None:
     """Sets all necessary secrets in the keyring for the application.
 
     Args:
-        secrets (dict): A dictionary containing all secrets needed for the application, with service names as keys and secret values as values.
+        secrets (dict): A dictionary containing all secrets needed for the application,
+        with service names as keys and secret values as values.
     """
     assert set(secrets.keys()) == set(REQUIRED_SECRETS), (
         f"Secrets keys must match required secrets: {REQUIRED_SECRETS}"
