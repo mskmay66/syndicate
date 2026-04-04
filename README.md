@@ -48,11 +48,11 @@ syndicate
 
 You will then be confronted with the TUI which should look something like this:
 
-<video src="images/Screen%20Recording%202026-04-03%20at%205.48.05 PM.mov" width="600" controls></video>
+![Splash Screen](images/splash_screen.gif)
 
 From there simply press the `s` key to toggle to the setup screen. This is what you should see (minus my setup, yours should be blank)
 
-<video src="images/Screen Recording 2026-04-03 at 5.54.38 PM.mov" width="600" controls></video>
+![Setup Screen](images/setup.gif)
 
 From here just follow the prompts from the TUI to fill things out, if you are confused about what anything means, read on and it will be explained.
 
@@ -72,4 +72,4 @@ If you already have a subscription/account with a model provider that is support
 
 Finally, what is the cost of these models? I will leave that to you, but from my demo you can see that i am running kimi becasue it is both good and relatively cheap.
 
-## How do I get all these damn keys?
+3. How do I get all these keys?
