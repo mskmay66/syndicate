@@ -146,7 +146,17 @@ Your previous settings will be preloaded for convenience.
 
 ## Tracking Your Agent
 
-To keep up with what your agent is doing, you can open the TUI's main screen. Here you can see your portfolio's performance, your recent transactions, and you can ask your trading team questions via an LLM chatbot. Here's what it should look like:
+To monitor your agent in real time, open the TUI’s main screen. This serves as your central dashboard, giving you a clear view into both performance and decision-making.
+
+From here, you can:
+
+* Track your portfolio performance over time
+* Review recent trades and transactions
+* Interact directly with your trading team through an integrated LLM-powered chatbot
+
+The chatbot allows you to ask questions about recent decisions, market conditions, or portfolio state—making the system more transparent and easier to reason about.
+
+Here’s what the main screen looks like:
 
 <img src="images/main_screen.gif" width="500" height="250" />
 
