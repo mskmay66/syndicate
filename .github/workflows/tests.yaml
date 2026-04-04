@@ -43,19 +43,9 @@ jobs:
     - name: Install test dependencies (e.g., pytest, ruff)
       run: |
         # Use uv add (or uv pip install) to add development/test tools
-        uv add pytest pytest-cov ruff coverage-badge --python ${{ matrix.python-version }}
+        uv add pytest pytest-cov ruff --python ${{ matrix.python-version }}
 
     - name: Run tests with pytest
       run: |
         # Run your tests using the installed tools
         uv run --python ${{ matrix.python-version }} pytest --cov=your_package --cov-report=xml tests/ --junitxml=test-results.xml
-
-    - name: Generate Badge
-      run: coverage-badge -o coverage.svg
-    - name: Commit Badge
-      run: |
-        git config --local user.email "mskmay66@gmail.com"
-        git config --local user.name "mskmay66"
-        git add coverage.svg
-        git commit -m "Update coverage badge" || exit 0
-        git push
