@@ -12,6 +12,7 @@
 </div>
 
 [![CI Tests](https://github.com/mskmay66/syndicate/actions/workflows/tests.yaml/badge.svg)](https://github.com/mskmay66/syndicate/actions/workflows/tests.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Syndicate is an AI-powered stock trading agent with a built-in integration with [Alpaca's](https://alpaca.markets/) brokerage API. It allows you to automatically monitor and trade a customizable watchlist of tickers with minimal manual intervention. The system is designed to combine multiple forms of analysis into a single, cohesive decision-making pipeline. It includes:
 
