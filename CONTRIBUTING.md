@@ -76,6 +76,8 @@ If you find a bug or have a feature request, please open an issue and include:
 * Expected vs actual behavior
 * Environment details (Python version, OS, etc.)
 
+See the `ISSUES.md` file for more information.
+
 ## 📌 Guidelines
 
 * Follow existing code style and structure
