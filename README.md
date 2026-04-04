@@ -11,18 +11,25 @@
 
 </div>
 
-Syndicate is an AI stock trading agent with a built-in integration with the [alpaca](https://alpaca.markets/) brokerage API. With it you can automatically follow and trade a given watchlist of tickers. It contains:
+Syndicate is an AI-powered stock trading agent with a built-in integration with [Alpaca's](https://alpaca.markets/) brokerage API. It allows you to automatically monitor and trade a customizable watchlist of tickers with minimal manual intervention. The system is designed to combine multiple forms of analysis into a single, cohesive decision-making pipeline. It includes:
 
-* A news analyst that reads recent news on your assets.
-* A fundemental analyst to read each companies financial statements.
-* A techinical analyst to look at the technical indicators for each stock, and
-* A trader to buy or sell tickers based on the recommendations of the former analysts, subject to determinstic guardrails set by the user.
+* A **news analyst** that reads and summarizes recent news affecting your assets.
+* A **fundamental analyst** that evaluates company financials and balance sheets.
+* A **technical analyst** that interprets indicators and price action.
+* A **trader** that executes buy/sell decisions based on the combined recommendations of the analysts, while respecting deterministic guardrails defined by the user.
 
-The package is free to download from pypi or this repo and open source, but operates under a bring-your-own-tokens model: you need a funded account with an LLM provider in order to run it. Currently the package supports anthropic, google, openai, qwen, and moonshot models. The package provides a terminal user interface (TUI) to make setup and monitoring easy and intuitive.
+The package is open source and freely available via PyPI or this repository. However, it follows a bring-your-own-keys model: you will need active API credentials for both market data and an LLM provider to run it. Currently supported model providers include Anthropic, Google, OpenAI, Qwen, and Moonshot.
+
+Syndicate also ships with a terminal user interface (TUI), making setup, configuration, and monitoring straightforward and intuitive—even for first-time users.
 
 ## Prerequisites
+Syndicate relies on a few external services to function properly:
 
-Syndicate uses a variety of external tools in order to provide users with an excellent trading experience. In particular, you must have an alpca account (for trading, news, and realtime quotes), and [alphavantage](https://www.alphavantage.co/support/#api-key) for the technical indicators. You can open your accounts and claim your free api keys from the links in this document.
+* A brokerage account with [Alpaca](https://alpaca.markets/) (for trading, account data, news, and real-time quotes)
+* An API key from [Alpha Vantage](https://www.alphavantage.co/support/) (for technical indicators and supplementary market data)
+* API access to at least one supported LLM provider
+
+You can sign up for Alpaca and Alpha Vantage and obtain free API keys using the links provided in this document. Most users can get started entirely on free tiers.
 
 ## Installation
 
@@ -60,16 +67,91 @@ From here just follow the prompts from the TUI to fill things out, if you are co
 
 There are lot of choices you need to make when you first confiure your agent, let's go through them one by one.
 
-1. What stocks do you want to follow?
+### 1. What stocks do you want to follow?
 
-This should be straight forward, pick whatever tickers you are interested in.
+Choose the tickers you want the agent to monitor and trade. This can be a focused list (e.g., a few tech stocks) or a broader portfolio. Keep in mind that more tickers = more API usage and potentially higher LLM costs.
 
-2. What model do you want to use?
+### 2. What model do you want to use?
 
-If you already have a subscription/account with a model provider that is support this could be easy, if not there are few factors to consider. First, which one is best. [This](https://arxiv.org/html/2510.02209v1) paper contains a ranking of llm's if you need to decide.
+If you already have access to a supported provider, this may be an easy choice. Otherwise, consider:
 
-**TLDR: Kimi and Qwen seem to dominate for these sorts of task, but make up your own mind.**
+* **Performance:** Some models are better at reasoning over financial data.
+* **Cost**: Pricing varies significantly between providers.
+* **Latency**: Faster models may be preferable for frequent trading cycles.
 
-Finally, what is the cost of these models? I will leave that to you, but from my demo you can see that i am running kimi becasue it is both good and relatively cheap.
+For a deeper comparison, see this paper:
+👉 https://arxiv.org/html/2510.02209v1
 
-3. How do I get all these keys?
+**TLDR**: Models like Qwen and Kimi tend to perform well for structured reasoning tasks, but the “best” choice depends on your priorities (cost vs performance).
+
+### 3. How do I get all these keys?
+
+#### 📊 Alpha Vantage API Key (Market Data)
+1. Go to the Alpha Vantage signup page:
+👉 https://www.alphavantage.co/support/#api-key
+2. Enter your email and request a free API key.
+3. Your key will be shown immediately and also sent to your email.
+
+**Notes:**
+* Free tier includes rate limits (typically 5 requests/minute, 500/day).
+* No credit card required.
+* Provides technical indicators, time series data, and more
+
+#### 📈 Alpaca API Keys (Trading)
+
+1. Create an account at Alpaca:
+👉 https://app.alpaca.markets/signup
+2. After signing in, navigate to the API Keys section:
+👉 https://app.alpaca.markets/paper/dashboard/overview
+
+**Notes:**
+* Use Paper Trading mode for testing (no real money).
+
+### Configuring Guardrails
+
+These settings control how your agent behaves in live markets and are critical for managing risk.
+
+* **Execution Frequency:**
+  Determines how often the agent runs. Syndicate creates a background cron job for you.
+  * Use preset intervals (e.g., hourly, daily), or
+  * Select `Custom` to provide your own cron expression.
+* **Position Concentration:**
+    Limits how much of your portfolio can be allocated to a single asset.
+* **Stop Loss (%):**
+    Defines the maximum acceptable loss per position before exiting.
+* **Take Profit (%):**
+    Specifies when gains should be locked in automatically.
+
+These controls ensure that, regardless of model output, trading behavior stays within predictable and user-defined risk bounds.
+
+### Paper Trading
+
+[Alpaca](https://alpaca.markets/) supports paper trading, allowing you to test strategies without risking real money.
+
+You can enable this via the toggle at the bottom of the setup screen. This is highly recommended when:
+
+First configuring your agent
+Testing new strategies or guardrails
+Evaluating different models
+
+## Changing Settings
+
+To update your configuration:
+
+1. Return to the setup screen (s)
+2. Modify any fields
+3. Press `f` to save and apply changes
+
+Your previous settings will be preloaded for convenience.
+
+## Tracking Your Agent
+
+To keep up with what your agent is doing, you can open the TUI's main screen. Here you can see your portfolio's performance, your recent transactions, and you can ask your trading team questions via an LLM chatbot. Here's what it should look like:
+
+<img src="images/main_screen.gif" width="500" height="250" />
+
+## TradingAgents
+
+The agent framework used in this project is inspired by the excellent [TradingAgents](https://github.com/tauricresearch/tradingagents) repository.
+
+Syndicate extends this work by adding automated trade execution, enabling a fully end-to-end pipeline from analysis → decision → execution. If you’re interested in the analysis side without automated trading, that project is worth exploring.
