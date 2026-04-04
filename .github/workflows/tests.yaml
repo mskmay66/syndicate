@@ -48,4 +48,4 @@ jobs:
     - name: Run tests with pytest
       run: |
         # Run your tests using the installed tools
-        uv run --python ${{ matrix.python-version }} pytest --cov=your_package tests/ --junitxml=test-results.xml
+        uv run --python ${{ matrix.python-version }} pytest --cov=your_package --cov-report=xml tests/ --junitxml=test-results.xml
