@@ -1,0 +1,4 @@
+site_name: Syndicate
+theme:
+  name: terminal
+  palette: dark

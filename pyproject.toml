@@ -46,3 +46,7 @@ dev = [
     "ruff>=0.15.1",
     "textual-dev>=1.8.0",
 ]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-terminal>=4.8.0",
+]
