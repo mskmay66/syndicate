@@ -242,7 +242,30 @@ class SetupScreen(Screen):  #
         logging.info("Finishing setup and entering app")
         if self.user:
             # the user already exits
-            pass
+            logging.info("Existing user found, checking for changes")
+            user_config = User(
+                model_provider=self.provider,
+                model_name=self.model,
+                watchlist=self.watchlist.strip().split(","),
+                broker_api_key=self.broker_api_key,
+                broker_secret_key=self.broker_secret_key,
+                model_api_key=self.model_api_key,
+                alpha_vantage_api_key=self.technical_api_key,
+                cron=self.user.cron,
+                guardrails=GuardRails(**self.guardrails),
+                paper=self.paper,
+            )
+
+            if user_config != self.user:
+                logging.info("Changes detected, updating user configuration")
+                # Save the user config to a file
+                add_config_file(user_config.to_json(), "user_config.json")
+
+                # add the secrets to the keyring
+                set_all_secrets(user_config.get_secrets())
+            else:
+                logging.info("No changes detected, skipping configuration update")
+            self.app.pop_screen()
         else:
             # generate the cron
             cron = convert_input_to_cron_expression(
