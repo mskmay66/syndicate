@@ -243,6 +243,9 @@ class SetupScreen(Screen):  #
         if self.user:
             # the user already exits
             logging.info("Existing user found, checking for changes")
+            cron = convert_input_to_cron_expression(
+                self.cron_schedule, self.cron_expression
+            )
             user_config = User(
                 model_provider=self.provider,
                 model_name=self.model,
@@ -251,7 +254,7 @@ class SetupScreen(Screen):  #
                 broker_secret_key=self.broker_secret_key,
                 model_api_key=self.model_api_key,
                 alpha_vantage_api_key=self.technical_api_key,
-                cron=self.user.cron,
+                cron=cron,
                 guardrails=GuardRails(**self.guardrails),
                 paper=self.paper,
             )
@@ -263,9 +266,11 @@ class SetupScreen(Screen):  #
 
                 # add the secrets to the keyring
                 set_all_secrets(user_config.get_secrets())
+
+                # generate the cron
+                register_cron(cron)
             else:
                 logging.info("No changes detected, skipping configuration update")
-            self.app.pop_screen()
         else:
             # generate the cron
             cron = convert_input_to_cron_expression(
@@ -296,7 +301,7 @@ class SetupScreen(Screen):  #
 
             # add the secrets to the keyring
             set_all_secrets(user_config.get_secrets())
-            self.app.pop_screen()
+        self.app.pop_screen()
 
 
 class SplashScreen(Screen):

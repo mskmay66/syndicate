@@ -3,6 +3,11 @@ repo_url: https://github.com/mskmay66/syndicate
 repo_name: mskmay66/syndicate
 features:
   - navigation.indexes
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Dev Docs:
+      - Syndicate: reference/syndicate.md
 theme:
   name: material
   features:
@@ -22,3 +27,4 @@ theme:
         name: Switch to light mode
 plugins:
   - search
+  - mkdocstrings

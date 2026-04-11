@@ -78,11 +78,6 @@ class Setup(Vertical):
                 yield Switch(id="paper_trade")
 
     def watch_user(self, new_user):
-        def get_freq_from_cron(cron):
-            cron_order = [None, "hourly", "daily", "weekly", "monthly"]
-            idx = cron.split(" ").index("*")
-            return cron_order[idx]
-
         if new_user:
             watchlist = self.query_one("#watchlist_input")
             provider = self.query_one("#provider_select")
@@ -116,7 +111,7 @@ class Setup(Vertical):
                 new_user.alpha_vantage_api_key.get_secret_value()
             )
 
-            cron_sch.value = get_freq_from_cron(new_user.cron)
+            cron_sch.value = "custom"
             cron_input.value = new_user.cron
             conc_input.value = str(new_user.guardrails.max_concentration)
             sp_input.value = str(new_user.guardrails.stop_loss)

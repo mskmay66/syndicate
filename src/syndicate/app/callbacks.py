@@ -122,6 +122,12 @@ def register_cron(cron_expression: str) -> None:
     logger.info(
         f"Registering syndicate cron job with expression: {cron_expression} for user {user}"
     )
+    exiting_jobs = cron.find_command("syndicate run")
+    if any(exiting_jobs):
+        logger.info(
+            "Existing syndicate cron job found. Removing it before adding a new one."
+        )
+        cron.remove_all(command="syndicate run")
 
     job = cron.new(command="syndicate run", comment="Syndicate Agent Cron Job")
     job.setall(cron_expression)
