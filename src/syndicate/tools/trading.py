@@ -25,6 +25,8 @@ class MaxConcetrationError(Exception):
 
 
 class TradeTools:
+    """A set of tools for trading stocks using the Alpaca API, including methods for fetching historical orders, account history, and placing buy/sell orders with optional limit prices. The class also includes a decorator to enforce maximum concentration limits on trades."""
+
     def __init__(self, user: User) -> None:
         self.user = user
         self.trade_client = TradingClient(
@@ -38,6 +40,14 @@ class TradeTools:
         )
 
     def get_historical_orders(self, limit: int = 10):
+        """Retrieves historical orders for the account, with an optional limit on the number of orders returned.
+
+        Args:
+            limit (int, optional): The maximum number of orders to retrieve. Defaults to 10.
+
+        Returns:
+            List: A list of historical orders for the account, limited to the specified number. If an error occurs while fetching the orders, None is returned.
+        """
         try:
             request_params = GetOrdersRequest(
                 status=QueryOrderStatus.ALL,
@@ -49,6 +59,14 @@ class TradeTools:
             return
 
     def get_account_history(self, period: int):
+        """Retrieves the account history for the specified period.
+
+        Args:
+            period (int): The period for which to retrieve the account history, in days.
+
+        Returns:
+            List: A list of account history records for the specified period. If an error occurs while fetching the account history, None is returned.
+        """
         try:
             request_params = GetPortfolioHistoryRequest(
                 period=str(period) + "D", timeframe="1D"
@@ -59,6 +77,7 @@ class TradeTools:
             return
 
     def take_profits_stop_loss(self):
+        """Checks the user's watchlist for any open positions and automatically places sell orders if the unrealized profit/loss exceeds the user's specified take profit or stop loss thresholds."""
         if self.user.guardrails.take_profit or self.user.guardrails.stop_loss:
             for ticker in self.user.watchlist:
                 try:
@@ -80,6 +99,19 @@ class TradeTools:
 
     @staticmethod
     def max_concentration(func):
+        """Decorator to enforce maximum concentration limits on trades. Before executing a trade, it checks if the new position value would exceed the user's specified maximum concentration threshold relative to the total portfolio value. If the trade would exceed the threshold, a MaxConcetrationError is raised.
+
+        Args:
+            func (_type_): The trading function to be decorated, which should accept `ticker`, `quantity`, and `limit_price` as arguments.
+
+        Raises:
+            TypeError: If the decorated function does not have the expected signature with `ticker`, `quantity`, and `limit_price` parameters.
+            MaxConcetrationError: If the new position value after the trade would exceed the user's specified maximum concentration threshold.
+
+        Returns:
+            Callable: The wrapped function with maximum concentration checks applied.
+        """
+
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
             port_value = json.loads(self._get_account_summary()).get("equity", 0)

@@ -6,6 +6,8 @@ from .validate import validate_model
 
 
 class UnifiedChatOpenAI(ChatOpenAI):
+    """A unified ChatOpenAI class that handles reasoning models without temperature and top_p parameters."""
+
     def __init__(self, **kwargs):
         model = kwargs.get("model", "")
         if self._is_reasoning_model(model):
@@ -25,6 +27,8 @@ class UnifiedChatOpenAI(ChatOpenAI):
 
 
 class OpenAIClient(BaseLLMClient):
+    """Basic LLM client for OpenAI models, including support for XAI and Moonshot models."""
+
     def __init__(
         self,
         model: str,

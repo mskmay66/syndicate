@@ -13,6 +13,14 @@ class FundementalTools:
 
     @staticmethod
     def _convert_timestamp_cols(df):
+        """Convert any columns in the dataframe that are of type Timestamp to strings in the format YYYY-MM-DD.
+
+        Args:
+            df (pd.DataFrame): The dataframe to convert.
+
+        Returns:
+            pd.DataFrame: The dataframe with any Timestamp columns converted to strings.
+        """
         df = df.copy()
         for col in df.columns:
             if isinstance(col, pd.Timestamp):

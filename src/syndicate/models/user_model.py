@@ -3,12 +3,16 @@ from typing import List, Dict
 
 
 class GuardRails(BaseModel):
+    """The pydantic model representing the guardrails for trading decisions, including maximum concentration, stop loss, and take profit levels."""
+
     max_concentration: float
     stop_loss: float = float("inf")
     take_profit: float = float("inf")
 
 
 class User(BaseModel):
+    """The pydantic model representing the user configuration for the trading system, including model provider and name, watchlist, API keys, cron schedule, guardrails, and paper trading mode."""
+
     model_provider: str
     model_name: str
     watchlist: List[str]

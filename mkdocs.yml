@@ -5,9 +5,17 @@ features:
   - navigation.indexes
 nav:
   - Home: index.md
-  - Usage: usage.md
+  - The Team: meet_the_team.md
   - Dev Docs:
-      - Syndicate: reference/syndicate.md
+      - Agents: dev_docs/agents.md
+      - LLM Clients: dev_docs/llm_clients.md
+      - Data Models: dev_docs/data_models.md
+      - Tools: dev_docs/tools.md
+      - Logging: dev_docs/logging.md
+      - File Management: dev_docs/file_manager.md
+      - Secret Management: dev_docs/secrets.md
+      - TradingGraph: dev_docs/trade.md
+      - ChatGraph: dev_docs/chat.md
 theme:
   name: material
   features:

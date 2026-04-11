@@ -21,7 +21,14 @@ class NewsTools:
 
     @staticmethod
     def _extract_article_data(article: dict) -> dict:
-        """Extract article data from yfinance news format (handles nested 'content' structure)."""
+        """Extract article data from yfinance news format (handles nested 'content' structure).
+
+        Args:
+            article (dict): The raw article data from yfinance.
+
+        Returns:
+            dict: A dictionary containing the extracted article data with keys 'title', 'summary', 'publisher', 'link', and 'pub_date'.
+        """
         # Handle nested content structure
         if "content" in article:
             content = article["content"]
@@ -71,6 +78,15 @@ class NewsTools:
             description="Gets the latest news for a given ticker or list of tickers. Example usage: get_news('AAPL') or get_news(['AAPL', 'GOOG'])",
         )
         def get_news(tickers: List[str], look_back: int = 7) -> str:
+            """Gets the latest news for a given ticker or list of tickers using the Alpaca News API.
+
+            Args:
+                tickers (List[str]): The ticker or list of tickers to get news for.
+                look_back (int, optional): The amount of time to go back in the news. Defaults to 7.
+
+            Returns:
+                str: The latest news for the given ticker or list of tickers in JSON format, with each article containing the source, headline, summary, and published date.
+            """
             keys_to_extract = ["source", "headline", "summary", "published_at"]
             symbols = ",".join(tickers)
             current_time = datetime.now()
@@ -95,6 +111,14 @@ class NewsTools:
             description="Gets the latest global news related to the stock market and economy. Example usage: get_global_news()",
         )
         def get_global_news(limit=10) -> str:
+            """Gets the latest global news related to the stock market and economy using yfinance.
+
+            Args:
+                limit (int, optional): The maximum number of articles to retrieve. Defaults to 10.
+
+            Returns:
+                str: The latest global news related to the stock market and economy in JSON format, with each article containing the title, summary, publisher, link, and published date.
+            """
             search_queries = [
                 "stock market economy",
                 "Federal Reserve interest rates",

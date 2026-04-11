@@ -5,6 +5,17 @@ logger = setup_logging(__name__, "trader")
 
 
 def build_trader(llm, tools, take_profit_stop_loss):
+    """This agent will act as a trader, executing trades based on the insights provided by the other analysts and the current state of the portfolio. It will use the provided tools to execute trades and manage the portfolio, and it will generate reports on its trading decisions.
+
+    Args:
+        llm: The language model to use for generating trading decisions and reports.
+        tools: The tools available for the trader to use in executing trades and managing the portfolio.
+        take_profit_stop_loss: A function that the trader can call to set take profit and stop loss orders based on its trading decisions.
+
+    Returns:
+        A function that takes the current state of the trading process and returns an updated state with the trader's actions, trade reports, and information about which tools were used.
+    """
+
     def trader_node(state):
         current_date = state.current_date
         tickers = state.tickers

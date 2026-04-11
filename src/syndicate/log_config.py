@@ -7,6 +7,18 @@ from .file_manager import generate_log_path
 def setup_logging(
     name, service_name, level=logging.INFO, max_bytes=10 * 1024 * 1024, backup_count=5
 ):
+    """Sets up logging for the application with a rotating file handler.
+
+    Args:
+        name (str): The name of the logger to be created.
+        service_name (str): _description_
+        level (logging.LOGGINGLEVEL, optional): The level to log. Defaults to logging.INFO.
+        max_bytes (int, optional): The max size of log file. Defaults to 10*1024*1024.
+        backup_count (int, optional): The number of backups. Defaults to 5.
+
+    Returns:
+        logging.logger: A configured logger instance.
+    """
     logger = logging.getLogger(name)
     logger.setLevel(level)
 

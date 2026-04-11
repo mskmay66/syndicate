@@ -3,6 +3,8 @@ from typing import Optional, Any
 
 
 class BaseLLMClient(ABC):
+    """The BaseLLMClient class serves as an abstract base class for all LLM client implementations. It defines the common interface and structure that all LLM clients must adhere to, ensuring consistency and ease of integration across different LLM providers."""
+
     def __init__(self, model_name: str, base_url: Optional[str] = None, **kwargs):
         self.model_name = model_name
         self.base_url = base_url

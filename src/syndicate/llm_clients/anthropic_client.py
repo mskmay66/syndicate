@@ -6,6 +6,8 @@ from .validate import validate_model
 
 
 class AnthropicClient(BaseLLMClient):
+    """The client for interacting with Anthropic's language models."""
+
     VALID_KWARGS = ("timeout", "max_retries", "api_key", "max_tokens", "callbacks")
 
     def __init__(

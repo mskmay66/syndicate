@@ -4,6 +4,8 @@ from ..models import User
 
 
 class TechnicalTools:
+    """A set of tools for fetching technical indicator data from the Alpha Vantage API."""
+
     BASE_URI = "https://www.alphavantage.co/query"
 
     def __init__(self, user: User) -> None:
@@ -13,7 +15,16 @@ class TechnicalTools:
     def get_technical_indicator(
         self, symbol: str, indicator: str, interval: str = "daily"
     ) -> dict:
-        """Fetch technical indicator data for a given stock symbol."""
+        """Fetch technical indicator data for a given stock symbol.
+
+        Args:
+            symbol (str): The stock symbol to fetch data for (e.g., 'AAPL').
+            indicator (str): The technical indicator to fetch (e.g., 'close_50_sma').
+            interval (str): The time interval for the data (e.g., 'daily', 'weekly', 'monthly'). Default is 'daily'.
+
+        Returns:
+            dict: The technical indicator data returned by the Alpha Vantage API, or an error message if the request fails.
+        """
         try:
             params = {
                 "function": indicator,
@@ -40,7 +51,16 @@ class TechnicalTools:
             ),
         )
         def get_indicator(symbol: str, indicator: str, interval: str = "daily") -> str:
-            """Tool to get technical indicator data for a stock symbol."""
+            """Tool to get technical indicator data for a stock symbol.
+
+            Args:
+                symbol (str): The stock symbol to fetch data for (e.g., 'AAPL').
+                indicator (str): The technical indicator to fetch. Supported indicators include: close_50_sma, close_200_sma, close_10_ema, macd, macds, macdh, rsi, boll, boll_ub, boll_lb, atr, vwma.
+                interval (str): The time interval for the data (e.g., 'daily', 'weekly', 'monthly'). Default is 'daily'.
+
+            Returns:
+                str: The technical indicator data in JSON format, or an error message if the request fails.
+            """
             supported_indicators = {
                 "close_50_sma": ("50 SMA", "close"),
                 "close_200_sma": ("200 SMA", "close"),

@@ -6,6 +6,16 @@ logger = setup_logging(__name__, "technical_analyst")
 
 
 def build_technical_analyst(llm, tools):
+    """This agent will analyze the technical indicators related to the stocks in the portfolio and provide insights that can help inform trading decisions. It will use the provided tools to gather and analyze data, and then generate a report with its findings.
+
+    Args:
+        llm: The language model to use for generating insights and reports.
+        tools: The tools available for the technical analyst to use in its analysis.
+
+    Returns:
+        A function that takes the current state of the trading process and returns an updated state with the technical analysis report and information about which tools were used.
+    """
+
     def technical_analyst_node(state):
         current_date = state.current_date
         tickers = state.tickers

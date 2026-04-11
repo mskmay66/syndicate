@@ -6,6 +6,8 @@ from .validate import validate_model
 
 
 class QwenClient(BaseLLMClient):
+    """The QwenClient class provides an interface to interact with Qwen language models using the langchain_qwq library."""
+
     VALID_KWARGS = (
         "enable_thinking",
         "thinking_budget",

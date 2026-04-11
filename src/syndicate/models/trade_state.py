@@ -5,6 +5,8 @@ from langchain_core.messages import BaseMessage
 
 
 class TradeState(BaseModel):
+    """The pydantic model representing the state of a trading decision, including the stock tickers involved, the current date, and any reports or messages related to the trade."""
+
     tickers: Annotated[list[str], "List of stock tickers involved in the trade"]
     current_date: str
     fundementals_report: Optional[str] = None

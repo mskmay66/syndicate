@@ -1,0 +1,3 @@
+# Secrets
+
+::: src.syndicate.secrets

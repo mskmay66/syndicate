@@ -22,6 +22,8 @@ from .tools import (
 
 
 class TradingGraph:
+    """TradingGraph is responsible for managing the flow of a trading decision process. It builds a trading graph based on the selected agents and their corresponding tool nodes, and then runs the graph with the initial trade state."""
+
     def __init__(
         self,
         user_config: User,

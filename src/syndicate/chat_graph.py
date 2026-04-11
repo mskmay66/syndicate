@@ -8,6 +8,8 @@ from .agents import build_relationship_manager
 
 
 class ChatGraph:
+    """ChatGraph is responsible for managing the flow of a relationship management conversation. It builds a relationship graph based on the selected agents and their corresponding tool nodes, and then runs the graph with the initial chat state."""
+
     def __init__(self, user: User):
         llm = create_llm_client(**user.get_llm_data()).get_llm()
         self.tools = [get_reports]

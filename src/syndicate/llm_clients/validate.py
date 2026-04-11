@@ -72,6 +72,13 @@ def validate_model(provider: str, model: str) -> bool:
     """Check if model name is valid for the given provider.
 
     For ollama, openrouter - any model is accepted.
+
+    Args:
+        provider (str): The name of the LLM provider.
+        model (str): The name of the model to validate.
+
+    Returns:
+        bool: True if the model is valid for the provider, otherwise raises ValueError.
     """
     provider_lower = provider.lower()
 
