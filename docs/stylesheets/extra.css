@@ -1,0 +1,9 @@
+:root {
+    /* Set a classic terminal green hex code */
+    --terminal-green: #8AD4A1;
+    --md-code-bg-color: #000000;
+    --md-code-fg-color: var(--terminal-green);
+    --md-accent-fg-color: var(--terminal-green);
+    /* Optional: Set a slightly different color for hover states */
+    --md-accent-fg-color--transparent: var(--terminal-green);
+  }

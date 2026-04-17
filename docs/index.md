@@ -2,7 +2,7 @@
 
 Your AI-powered, personal trading team. On this site you will find detailed installation and setup instructions as well as dev documentation.
 
-## Getting Started
+## Quickstart
 
 To install the package simply use python's built in package manager, pip:
 

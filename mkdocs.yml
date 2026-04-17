@@ -6,6 +6,7 @@ features:
 nav:
   - Home: index.md
   - The Team: meet_the_team.md
+  - Getting Started: setup_guide.md
   - Dev Docs:
       - Agents: dev_docs/agents.md
       - LLM Clients: dev_docs/llm_clients.md
@@ -33,6 +34,10 @@ theme:
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css
+
 plugins:
   - search
   - mkdocstrings
