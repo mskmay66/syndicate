@@ -29,6 +29,7 @@ Syndicate also ships with a terminal user interface (TUI), making setup, configu
 ## Prerequisites
 Syndicate relies on a few external services to function properly:
 
+* A UNIX operating system to schedule jobs (i.e. linux, macos)
 * A brokerage account with [Alpaca](https://alpaca.markets/) (for trading, account data, news, and real-time quotes)
 * An API key from [Alpha Vantage](https://www.alphavantage.co/support/) (for technical indicators and supplementary market data)
 * API access to at least one supported LLM provider
