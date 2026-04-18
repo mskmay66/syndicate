@@ -14,28 +14,6 @@ REQUIRED_SECRETS = [
     "model_api_key",
 ]
 
-# def add_secret_to_keyring(service_name: str, secret: str) -> None:
-#     """
-#     Add a secret to the keyring.
-
-#     Args:
-#         service_name (str): The name of the service the secret is associated with.
-#         secret (str): The secret value to be stored.
-#     """
-#     try:
-#         command = [
-#             "security", "add-generic-password",
-#             "-a", username,
-#             "-s", service_name,
-#             "-w", secret,
-#             "-U"  # Update if the item already exists
-#             "/Library/Keychains/System.keychain"
-#         ]
-#         subprocess.run(command, check=True)
-#         logger.info(f"Secret for {service_name} added successfully.")
-#     except Exception as e:
-#         logger.error(f"Failed to add secret for {service_name}. Reason: {str(e)}")
-
 
 def add_secret_to_sys(service_name: str, secret: str) -> None:
     """Adds a secret to the file with the service name.
@@ -79,45 +57,6 @@ def get_secret_from_sys(service_name: str) -> str:
         return ""
 
 
-# def add_secret_to_keyring(service_name: str, secret: str) -> None:
-#     """
-#     Add a secret to the keyring.
-
-#     Args:
-#         service_name (str): The name of the service the secret is associated with.
-#         username (str): The username associated with the secret.
-#         secret (str): The secret value to be stored.
-#     """
-#     try:
-#         keyring.set_password(service_name, username, secret)
-#         logger.info(f"Secret for {service_name} added successfully.")
-#     except Exception as e:
-#         logger.error(f"Failed to add secret for {service_name}. Reason: {str(e)}")
-
-
-# def get_secret_from_keyring(service_name: str) -> str:
-#     """
-#     Retrieve a secret from the keyring.
-
-#     Args:
-#         service_name (str): The name of the service the secret is associated with.
-#         username (str): The username associated with the secret.
-
-#     Returns:
-#         str: The retrieved secret value.
-#     """
-#     try:
-#         secret = keyring.get_password(service_name, username)
-#         if secret is None:
-#             logger.warning(f"No secret found for {service_name} and {username}.")
-#             return ""
-#         logger.info(f"Secret for {service_name} retrieved successfully.")
-#         return secret
-#     except Exception as e:
-#         logger.error(f"Failed to retrieve secret for {service_name}. Reason: {str(e)}")
-#         return ""
-
-
 def set_all_secrets(secrets: Dict) -> None:
     """Sets all necessary secrets in the keyring for the application.
 
@@ -148,4 +87,3 @@ def load_all_secrets() -> Dict[str, str]:
         for v in values
         if v["service_name"] in REQUIRED_SECRETS
     }
-    # return {k: get_secret_from_keyring(k) for k in REQUIRED_SECRETS}

@@ -122,7 +122,6 @@ def register_cron(cron_expression: str) -> None:
     logger.info(
         f"Registering syndicate cron job with expression: {cron_expression} for user {user}"
     )
-    # * * * * * /bin/bash -l -c '/Library/Frameworks/Python.framework/Versions/3.13/bin/syndicate-run & echo "completed run at $(date)"'  &> /tmp/syndicate_cron.log
 
     command = "/bin/bash -lc '$(which syndicate-run) & echo \"completed run at $(date)\"'  &> /tmp/syndicate_cron.log"
     exiting_jobs = cron.find_command(command)
