@@ -40,7 +40,6 @@ class Setup(Vertical):
                 yield Input(
                     placeholder="Enter your watchlist (comma-separated tickers)",
                     id="watchlist_input",
-                    max_length=9,
                 )
             yield ProviderChoice(id="provider_choice", classes="box")
             yield ModelChoiceFromProvider(
