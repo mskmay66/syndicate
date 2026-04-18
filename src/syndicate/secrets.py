@@ -127,8 +127,12 @@ def set_all_secrets(secrets: Dict) -> None:
     assert set(secrets.keys()) == set(REQUIRED_SECRETS), (
         f"Secrets keys must match required secrets: {REQUIRED_SECRETS}"
     )
+    records = []
     for service_name, secret in secrets.items():
-        add_secret_to_sys(service_name, secret)
+        records.append(
+            {"service_name": service_name, "username": username, "secret": secret}
+        )
+    add_config_file(records, ".secrets.json")
 
 
 def load_all_secrets() -> Dict[str, str]:
@@ -138,6 +142,7 @@ def load_all_secrets() -> Dict[str, str]:
         List: A list of all secrets needed for the application, in the order they are expected.
     """
     values = read_config_file(".secrets.json")
+    logger.info(f"Loaded secrets from .secrets.json: {values}")
     return {
         v["service_name"]: v["secret"]
         for v in values

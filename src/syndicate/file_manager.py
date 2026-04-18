@@ -1,7 +1,7 @@
 import os
 import getpass
 import json
-from typing import Dict
+from typing import Dict, List
 from platformdirs import user_config_dir, user_data_dir
 
 appname = "syndicate"
@@ -11,7 +11,7 @@ config_dir = user_config_dir(appname, appuser)
 data_dir = user_data_dir(appname, appuser)
 
 
-def add_config_file(data: Dict, name: str):
+def add_config_file(data: Dict | List, name: str):
     """Adds a config file to the config directory.
 
     Args:
