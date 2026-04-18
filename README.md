@@ -1,6 +1,6 @@
 <div align="center">
   <img src="images/logo.svg" alt="Description" />
-</pdiv>
+</div>
 
 
 <div align="center">
