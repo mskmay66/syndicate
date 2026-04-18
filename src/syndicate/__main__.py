@@ -8,7 +8,7 @@ from .log_config import setup_logging
 from .file_manager import read_config_file
 from .secrets import load_all_secrets
 
-logger = setup_logging(__name__, "syndicate")
+logger = setup_logging(__name__, "syndicate-runnner")
 
 
 def _load_user_config() -> User:

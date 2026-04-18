@@ -15,8 +15,8 @@ class NewsTools:
     def __init__(self, user: User) -> None:
         self.user = user
         self.news_client = NewsClient(
-            user.broker_api_key.get_secret_value(),
-            user.broker_secret_key.get_secret_value(),
+            api_key=user.broker_api_key.get_secret_value(),
+            secret_key=user.broker_secret_key.get_secret_value(),
         )
 
     @staticmethod

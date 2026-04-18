@@ -1,3 +1,4 @@
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -25,6 +26,9 @@ def setup_logging(
     logger.propagate = False
 
     log_path = generate_log_path(service_name)
+    if not os.path.exists(log_path):
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
     handler = RotatingFileHandler(
         log_path, maxBytes=max_bytes, backupCount=backup_count
     )

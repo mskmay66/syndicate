@@ -5,7 +5,7 @@ from typing import Optional
 import getpass
 from crontab import CronTab
 
-from ..secrets import get_secret_from_keyring, add_secret_to_keyring
+from ..secrets import add_secret_to_sys, get_secret_from_sys
 from ..log_config import setup_logging
 
 logger = setup_logging(__name__, "syndicate")
@@ -13,7 +13,7 @@ logger = setup_logging(__name__, "syndicate")
 
 def add_secret(service_name: str, secret: str) -> None:
     """Adds a secret to the keyring."""
-    add_secret_to_keyring(service_name, secret)
+    add_secret_to_sys(service_name, secret)
     with open("services.json", "r") as f:
         services = []
         if os.path.exists("services.json") and os.path.getsize("services.json") != 0:
@@ -30,7 +30,7 @@ def get_secret(
     service_name: str,
 ) -> Optional[str]:
     """Retrieves a secret from the keyring."""
-    secret = get_secret_from_keyring(service_name)
+    secret = get_secret_from_sys(service_name)
     if secret:
         logger.info(f"Got secret for {service_name}")
         return secret
@@ -122,8 +122,9 @@ def register_cron(cron_expression: str) -> None:
     logger.info(
         f"Registering syndicate cron job with expression: {cron_expression} for user {user}"
     )
+    # * * * * * /bin/bash -l -c '/Library/Frameworks/Python.framework/Versions/3.13/bin/syndicate-run & echo "completed run at $(date)"'  &> /tmp/syndicate_cron.log
 
-    command = "which syndicate | xargs -I {} syndicate run"
+    command = "* * * * * /bin/bash -l -c '$(which syndicate-run) & echo \"completed run at $(date)\"'  &> /tmp/syndicate_cron.log"
     exiting_jobs = cron.find_command(command)
     if any(exiting_jobs):
         logger.info(
