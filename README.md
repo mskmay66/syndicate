@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="images/logo.svg" alt="Description" />
+  <img src="docs/images/logo.svg" alt="Description" />
 </div>
 
 
@@ -56,11 +56,11 @@ syndicate
 
 You will then be confronted with the TUI which should look something like this:
 
-<img src="images/splash_screen.gif" width="500" height="200" />
+<img src="docs/images/splash_screen.gif" width="500" height="200" />
 
 From there simply press the `s` key to toggle to the setup screen. This is what you should see (minus my setup, yours should be blank)
 
-<img src="images/setup.gif" width="500" height="200" />
+<img src="docs/images/setup.gif" width="500" height="200" />
 
 From here just follow the prompts from the TUI to fill things out, if you are confused about what anything means, read on and it will be explained.
 
@@ -159,7 +159,7 @@ The chatbot allows you to ask questions about recent decisions, market condition
 
 Here’s what the main screen looks like:
 
-<img src="images/main_screen.gif" width="500" height="250" />
+<img src="docs/images/main_screen.gif" width="500" height="250" />
 
 ## TradingAgents
 
