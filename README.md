@@ -1,15 +1,5 @@
-<div style="text-align: center;" markdown="1">
+![Logo](images/logo.svg)
 
-<pre>
-   _____                        __    _                   __
-  / ___/   __  __   ____   ____/ /   (_)  _____  ____ _  / /_  ___
-  \__ \   / / / /  / __ \ / __  /   / /  / ___/ / __ `/ / __/ / _ \
- ___/ /  / /_/ /  / / / // /_/ /   / /  / /__  / /_/ / / /_  /  __/
-/____/   \__, /  /_/ /_/ \__,_/   /_/   \___/  \__,_/  \__/  \___/
-        /____/
-</pre>
-
-</div>
 
 [![CI Tests](https://github.com/mskmay66/syndicate/actions/workflows/tests.yaml/badge.svg)](https://github.com/mskmay66/syndicate/actions/workflows/tests.yaml)
 ![Static Badge](https://img.shields.io/badge/Release-alpha-blue)

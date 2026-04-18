@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="320" viewBox="0 0 1400 320">
+  <rect width="100%" height="100%" fill="#0000" />
+  <g fill="#8AD4A1" font-family="monospace" font-size="28">
+    <text x="25" y="60" xml:space="preserve">    _____                        __    _                   __</text>
+    <text x="40" y="95" xml:space="preserve">  / ___/   __  __   ____   ____/ /   (_)  _____  ____ _  / /_  ___</text>
+    <text x="40" y="130" xml:space="preserve">  \__ \   / / / /  / __ \ / __  /   / /  / ___/ / __ `/ / __/ / _ \</text>
+    <text x="40" y="165" xml:space="preserve"> ___/ /  / /_/ /  / / / // /_/ /   / /  / /__  / /_/ / / /_  /  __/</text>
+    <text x="40" y="200" xml:space="preserve">/____/   \__, /  /_/ /_/ \__,_/   /_/   \___/  \__,_/  \__/  \___/</text>
+    <text x="60" y="235" xml:space="preserve">       /____/</text>
+  </g>
+</svg>
