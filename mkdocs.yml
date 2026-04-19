@@ -33,3 +33,8 @@ extra_css:
 plugins:
   - search
   - mkdocstrings
+
+markdown_extensions:
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.superfences  # Required for fenced code blocks

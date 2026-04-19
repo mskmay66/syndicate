@@ -1,18 +1,80 @@
+/* Base text stays white */
 :root {
-    /* Set a classic terminal green hex code */
-    --terminal-green: #8AD4A1;
-    --md-code-bg-color: #000000;
-    --md-code-fg-color: var(--terminal-green);
-    --md-accent-fg-color: var(--terminal-green);
-    /* Optional: Set a slightly different color for hover states */
-    --md-accent-fg-color--transparent: var(--terminal-green);
-  }
+  --terminal-green: #8AD4A1;
 
-  .md-header__button.md-logo img {
-    height: 2.5rem; /* Default is usually around 1.2rem to 2rem */
-    width: auto;
+  --md-default-fg-color: #ffffff;
+  --md-default-fg-color--light: rgba(255, 255, 255, 0.7);
+  --md-default-fg-color--lighter: rgba(255, 255, 255, 0.3);
+  --md-primary-fg-color: #000000;
+  --md-accent-fg-color: var(--terminal-green);
 }
 
-/* .md-header__title {
-  display: none;
-} */
+/* Main backgrounds */
+body,
+.md-container,
+.md-main,
+.md-content,
+.md-sidebar,
+.md-nav,
+.md-footer,
+.md-header,
+.md-tabs {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Default text */
+.md-typeset,
+.md-nav,
+.md-header,
+.md-tabs,
+.md-search,
+.md-footer {
+  color: whitesmoke;
+}
+
+/* Normal links stay white */
+.md-typeset a,
+.md-nav__link,
+.md-tabs__link,
+.md-header__title,
+.md-nav__title {
+  color: #ffffff;
+}
+
+/* Hover + active links become green */
+.md-typeset a:hover,
+.md-nav__link:hover,
+.md-tabs__link:hover,
+.md-nav__link--active,
+.md-tabs__link--active,
+.md-nav__item .md-nav__link--active,
+.md-nav__item .md-nav__link:focus,
+.md-tabs__link:focus {
+  color: var(--terminal-green) !important;
+}
+
+/* Search */
+.md-search__form {
+  background-color: #050505;
+}
+
+.md-search__input,
+.md-search__input::placeholder {
+  color: #ffffff;
+}
+
+/* Code blocks */
+.md-typeset code,
+.md-typeset pre,
+.highlight,
+.highlight pre {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: whitesmoke;
+}
+
+/* Logo */
+.md-header__button.md-logo img {
+  height: 2.5rem;
+  width: auto;
+}
