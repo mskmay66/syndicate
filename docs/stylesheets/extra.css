@@ -1,11 +1,11 @@
 /* Base text stays white */
 :root {
   --terminal-green: #8AD4A1;
-
+  --md-default-bg-color: rgba(0, 0, 0, 0.7);
   --md-default-fg-color: #ffffff;
   --md-default-fg-color--light: rgba(255, 255, 255, 0.7);
   --md-default-fg-color--lighter: rgba(255, 255, 255, 0.3);
-  --md-primary-fg-color: #000000;
+  --md-primary-fg-color: #18191e;
   --md-accent-fg-color: var(--terminal-green);
 }
 
@@ -19,7 +19,7 @@ body,
 .md-footer,
 .md-header,
 .md-tabs {
-  background-color: #000000;
+  background-color: #0b0c10;
   color: #ffffff;
 }
 
@@ -69,7 +69,7 @@ body,
 .md-typeset pre,
 .highlight,
 .highlight pre {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.02);
   color: whitesmoke;
 }
 
