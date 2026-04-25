@@ -30,7 +30,7 @@ jobs:
 
     - name: Install uv and dependencies
       # Use the setup-uv action to install uv and cache it
-      uses: astral-sh/setup-uv@v1
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
       with:
         uv-version: 0.1.x # Use the latest version or pin to a specific one
         # Optional: cache the uv package cache
