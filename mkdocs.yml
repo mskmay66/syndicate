@@ -33,4 +33,4 @@ plugins:
 markdown_extensions:
   - pymdownx.highlight:
       use_pygments: true
-  - pymdownx.superfences
+  - pymdownx.superfences # Required for mkdocstrings to render code blocks properly
