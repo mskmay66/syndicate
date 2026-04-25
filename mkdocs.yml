@@ -22,10 +22,6 @@ theme:
   logo: images/logo.svg
   features:
     - content.code.copy
-  # palette:
-  #   # Palette toggle for dark mode
-  #   - scheme: slate
-  #     primary: black
 
 extra_css:
   - stylesheets/extra.css
