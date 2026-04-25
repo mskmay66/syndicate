@@ -24,11 +24,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
+
+      - name: Install uv and dependencies
+        # Use the setup-uv action to install uv and cache it
+        uses: astral-sh/setup-uv@v1
+        with:
+          uv-version: 0.1.x # Use the latest version or pin to a specific one
+          # Optional: cache the uv package cache
+          cache-key-prefix: "v1-uv-cache"
 
       - name: Install MkDocs and dependencies
         run: |
-          uv sync --python 3.12 --all-groups
+          uv sync --python 3.13 --all-groups
 
       - name: Build site
         run: uv run mkdocs build --site-dir site
