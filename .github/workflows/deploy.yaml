@@ -21,7 +21,7 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: python-package-distributions
-            path: dist/*
+            path: dist
             run-id: ${{ github.event.workflow_run.id }}
             github-token: ${{ secrets.WORKFLOW_TOKEN }}
 
