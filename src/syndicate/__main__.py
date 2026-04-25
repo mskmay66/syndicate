@@ -51,9 +51,10 @@ def main() -> None:
 
         result = graph.run(initial_state)
         logger.info(f"Final result: {result}")
-    logger.info(
-        "Failed to load user configuration. Please check the logs for more details."
-    )
+    else:
+        logger.info(
+            "Failed to load user configuration. Please check the logs for more details."
+        )
 
 
 if __name__ == "__main__":

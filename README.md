@@ -37,13 +37,13 @@ You can sign up for Alpaca and Alpha Vantage and obtain free API keys using the 
 You can install the package from pypi just as you would any other:
 
 ```bash
-pip install syndicate
+pip install syndicate-trading
 ```
 
 or, download the build artifacts from this repo:
 
 ```bash
-pip install git+https://github.com/mskmay66/syndicate@alpha
+pip install git+https://github.com/mskmay66/syndicate@v0.1.0
 ```
 
 ## Setup
