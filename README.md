@@ -6,7 +6,8 @@
 <div align="center">
 
 [![CI Tests](https://github.com/mskmay66/syndicate/actions/workflows/tests.yaml/badge.svg)](https://github.com/mskmay66/syndicate/actions/workflows/tests.yaml)
-![Static Badge](https://img.shields.io/badge/Release-alpha-blue)
+![Static Badge](https://img.shields.io/badge/Release-v0.1.0-blue)
+![Static Badge](https://img.shields.io/badge/pypi-v0.1.0-orange)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
